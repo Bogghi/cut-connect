@@ -32,3 +32,4 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+docker-compose-db.yml
