@@ -1,0 +1,13 @@
+services:
+  mariadb:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: <your_root_password_here>
+      MYSQL_USER: <your_master_user_here>
+      MYSQL_PASSWORD: <your_user_password_here>
+      MYSQL_DATABASE: <your_database_schema_here>
+    ports:
+      - "3306:3306"
+networks:
+  internal:
+    driver: bridge
