@@ -2,21 +2,23 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: nginx/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "9000:80"
+    depends_on:
+      - php
     networks:
       - internal
     volumes:
-      - ./api/:/var/www/html/
-#      - ./logs/nginx:/var/log/nginx/
+      - ./api/:/var/www/html/API/v1
+
   php:
     image: php:fpm-alpine
     networks:
       - internal
     volumes:
-      - ./api/:/var/www/html/
-#      - ./logs/php.log:/var/log/fpm-php.www.log
+      - ./api/:/var/www/html/API/v1
+
 networks:
   internal:
     driver: bridge

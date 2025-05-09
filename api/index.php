@@ -7,8 +7,9 @@ require __DIR__ . '/vendor/autoload.php';
 
 $app = AppFactory::create();
 
-$app->get('/', function (Request $request, Response $response, $args) {
-    $response->getBody()->write("Hello world!");
+// Define the /API/v1 route
+$app->get('/API/v1', function (Request $request, Response $response, $args) {
+    $response->getBody()->write("Welcome to API v1!");
     return $response;
 });
 
