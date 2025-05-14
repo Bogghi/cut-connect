@@ -1,61 +1,66 @@
-.container {
-    position: relative;
-    height: 500px;
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+#landing {
+    .container {
+        position: relative;
+        height: 500px;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
 
-    img {
-        min-height: 100%;
-        min-width: 100%;
-        object-fit: cover;
+        img {
+            min-height: 100%;
+            min-width: 100%;
+            object-fit: cover;
+        }
+
+        .container-content {
+            background-color: rgba(78, 78, 78, 0.4);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+
+            h1, p {
+                color: white;
+            }
+        }
     }
 
-    .container-content {
-        background-color: rgba(78, 78, 78, 0.4);
-        position: absolute;
-        width: 100%;
-        height: 100%;
+    .section {
+        padding: 80px 0;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        text-align: center;
 
-        h1, p {
-            color: white;
-        }
-
-        .btn {
-            margin-top: 30px;
+        .section-heading {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            padding: 10px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            flex-direction: column;
+        }
 
-            span {
-                font-size: 13px;
-                color: #3f3f3f;
-            }
+        p {
+            margin: 0;
+        }
 
-            svg {
-                color: #3f3f3f;
-                width: 18px;
-            }
+        h2 {
+            margin: 0;
+        }
 
-            &.btn-primary {
-                background-color: rgb(230, 179, 37);
+        .services {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 50px;
 
-                &:hover {
-                    transition: background-color 0.2s;
-                    background-color: rgb(155, 128, 64);
-                }
+            .service {
+
             }
         }
     }
