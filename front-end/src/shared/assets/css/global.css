@@ -42,6 +42,17 @@ body {
             background-color: rgba(85, 32, 41, 0.9);
         }
     }
+    &.btn-tertiary {
+        background-color: #FFF;
+        color: #7D2E3B;
+        border: 1px solid #7D2E3B;
+        border-radius: 5px;
+
+        &:hover {
+            transition: background-color 0.2s;
+            background-color: rgba(125, 46, 59, 0.27);
+        }
+    }
 }
 
 .txt-0 {
@@ -49,6 +60,9 @@ body {
 }
 .txt-1 {
     color: rgb(75,85,99);
+}
+.txt-2 {
+    color: #7B889C
 }
 
 .txt-secondary {
