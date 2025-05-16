@@ -95,6 +95,10 @@
             }
         }
 
+        .section-heading {
+            text-align: center;
+        }
+
         .section-content {
             display: flex;
             padding: 30px 0;
@@ -116,6 +120,10 @@
                 border-radius: 10px;
                 box-shadow: 0 0 10px #E2E8F0;
                 width: 20vw;
+
+                @media (max-width: 1380px) {
+                    width: 80vw;
+                }
 
                 h2 {
                     font-size: 18px;

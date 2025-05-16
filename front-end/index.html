@@ -4,11 +4,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/src/shared/assets/css/landing.css">
         <title>Cut Connect</title>
     </head>
     <body>
         <div id="nav"></div>
+        <div id="app"></div>
         <div id="landing">
             <div class="container">
                 <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=2340&amp;q=80" alt="barber">
@@ -152,6 +152,61 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="footer">
+            <footer>
+                <div class="column">
+                    <div class="company-icon">
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-scissors h-6 w-6"
+                        >
+                            <circle cx="6" cy="6" r="3"></circle>
+                            <path d="M8.12 8.12 12 12"></path>
+                            <path d="M20 4 8.12 15.88"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <path d="M14.8 14.8 20 20"></path>
+                        </svg>
+                        <span class="icon-text">I Barbieri Lissone</span>
+                    </div>
+                    <span class="company-desc">Servizi professionali da barbiere con un’attenzione particolare allo stile, alla qualità e alla soddisfazione del cliente.</span>
+                </div>
+                <div class="column">
+                    <div class="info-title">
+                        Informazioni di contatto
+                    </div>
+                    <div class="info-items">
+                        <div class="info-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-map-pin h-4 w-4 mr-2">
+                                <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            Via Giosuè Carducci, 35, 20851 Lissone MB
+                        </div>
+                        <div class="info-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-clock h-4 w-4 mr-2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Mar-Sab: 9-12 | 13-19
+                        </div>
+                        <div class="info-item"></div>
+                    </div>
+                </div>
+                <div class="column"></div>
+            </footer>
         </div>
         <script type="module" src="/src/landing/main.js"></script>
     </body>
