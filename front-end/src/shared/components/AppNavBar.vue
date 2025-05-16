@@ -79,7 +79,7 @@ export default {
   justify-content: flex-start;
   gap: 50px;
   height: 50px;
-  background-color: rgb(125 46 59);
+  background-color: var(--main-color);
   color: white;
   padding: 10px;
 
