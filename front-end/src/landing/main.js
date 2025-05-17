@@ -13,6 +13,7 @@ const app = createApp(AppNavBar);
 app.mount("#nav");
 
 eventBus.on('navigation', destination => {
+  console.log('navigatred', destination);
   switch(destination) {
     case 'console':
       document.querySelectorAll('#landing,#footer')

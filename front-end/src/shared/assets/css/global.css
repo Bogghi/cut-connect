@@ -74,3 +74,20 @@ body {
 .hidden {
     display: none;
 }
+
+.shadow {
+    box-shadow: 0 0 10px #E2E8F0;
+}
+
+.panel {
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #E2E8F0;
+    padding: 30px;
+}
+
+input {
+    border: 1px solid #E2E8F0;
+    padding: 10px;
+    border-radius: 5px;
+}
