@@ -1,6 +1,6 @@
 <template>
   <nav class="nav-bar">
-    <div class="icon">
+    <div class="icon" @click="navigateTo('home')">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -22,7 +22,7 @@
       <span class="icon-text">I Barbieri Lissone</span>
     </div>
     <div class="navigation">
-      <div class="nav-link">
+      <div class="nav-link" @click="navigateTo('console')">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -42,7 +42,7 @@
         </svg>
         <span class="nav-link-label">Console</span>
       </div>
-      <div class="nav-link">
+      <div class="nav-link" v-if="currentRoute === 'home'">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -68,8 +68,32 @@
 </template>
 
 <script>
+import eventBus from '@/shared/utils/eventBus'
+
 export default {
   name: "AppNavBar",
+  data() {
+    return {
+      currentRoute: 'home'
+    }
+  },
+  methods: {
+    navigateTo(app) {
+      switch (app){
+        case 'console':
+          this.currentRoute = 'console';
+          eventBus.emit('navigation', 'console');
+          break;
+        case 'home':
+          this.currentRoute = 'home';
+          eventBus.emit('navigation', 'home');
+          break;
+        default:
+          console.warn('No app found');
+          break;
+      }
+    }
+  }
 };
 </script>
 
@@ -111,7 +135,7 @@ export default {
       }
 
       .nav-link-lable {
-        font-size: 18px
+        font-size: 18px;
       }
     }
   }

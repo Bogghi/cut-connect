@@ -70,3 +70,7 @@ body {
 .txt-secondary {
     color: var(--main-color);
 }
+
+.hidden {
+    display: none;
+}
