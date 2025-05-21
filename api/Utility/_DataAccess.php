@@ -130,7 +130,6 @@ class _DataAccess
         $this->connectPdo();
         $stmt = $this->pdo->prepare($sql);
         $exec = $stmt->execute($params);
-        $stmt->debugDumpParams();
 
         if ($exec) {
             $result = $single ? $stmt->fetch($fetchMode) : $stmt->fetchAll($fetchMode);

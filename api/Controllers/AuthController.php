@@ -27,7 +27,7 @@ class AuthController
 
             $username = $requestBody['username'];
             $password = $requestBody['password'];
-            $hashPassword = password_hash($password, PASSWORD_BCRYPT);
+            $hashPassword = hash('sha256', $password);
 
             $qRes = $this->dataAccess->get(
                 table: "users",
@@ -37,7 +37,7 @@ class AuthController
                 ],
                 single: true,
             );
-            var_dump($qRes);
+
             if($qRes && count($qRes) > 0) {
 
                 $token = TokenGenerator::generateToken(
