@@ -35,7 +35,9 @@ export default class API {
       headers: headers
     })
       .then(response => {
-        callback(response);
+        response.json().then(data => {
+          callback(data);
+        })
       })
       .catch((error) => {
         console.log('Error: ', error);
