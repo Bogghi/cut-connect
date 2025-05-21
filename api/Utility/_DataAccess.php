@@ -18,7 +18,8 @@ class _DataAccess
         }
     }
 
-    private function interpretField($field) {
+    private function interpretField($field): mixed
+    {
         if(is_bool($field)) {
             return $field ? 1 : 0;
         }
@@ -36,7 +37,8 @@ class _DataAccess
         $countPartial = false,
         $distinct = false,
         $fetchMode = PDO::FETCH_ASSOC
-    ): mixed {
+    ): mixed
+    {
         $this->connectPdo();
 
         $limitQueryPart = "";
@@ -150,5 +152,77 @@ class _DataAccess
         }
 
         return $result;
+    }
+
+    public function add($table, $requestData, $duplicateUpdateKey = false)
+    {
+
+        $this->connectPdo();
+
+        if ($requestData === null) {
+            return false;
+        }
+
+        $columnString = "";
+        $valueString = "";
+        $duplicateString = "";
+        $params = [];
+
+        if (count($requestData) > 0 && is_array($requestData[array_rand($requestData)])) {
+            $columnSet = false;
+            foreach ($requestData as $value) {
+                $valueString .= "(";
+                foreach ($value as $columnArray => $valueArray) {
+                    if ($columnArray) {
+                        if (!$columnSet) {
+                            $columnString .= $columnArray . ",";
+                            //todo support all now() params
+                            if($valueArray === "NOW(6)") {
+                                $valueString .= $valueArray . ",";
+                                continue;
+                            }
+
+                            if($duplicateUpdateKey != $columnArray) {
+                                $duplicateString .= "$columnArray=VALUES($columnArray), ";
+                            }
+                        }
+                        $valueString .= "?,";
+                        $params[] = $this->interpretField($valueArray);
+                    }
+                }
+                $valueString = rtrim($valueString, ", ");
+                $valueString .= "),";
+                $columnSet = true;
+            }
+            $valueString = rtrim($valueString, ", ");
+        }
+        else {
+            $valueString .= "(";
+            foreach ($requestData as $column => $value) {
+                if ($column) {
+                    $columnString .= $column . ",";
+                    $valueString .= "?,";
+                    $params[] = $this->interpretField($value);
+                    if($duplicateUpdateKey != $column) {
+                        $duplicateString .= "$column=VALUES($column), ";
+                    }
+                }
+            }
+            $valueString = rtrim($valueString, ", ");
+            $valueString .= ")";
+        }
+
+        $columnString = rtrim($columnString, ", ");
+
+        $sql = "INSERT INTO " . $table . " (" . $columnString . ") VALUES " . $valueString;
+
+        if($duplicateUpdateKey) {
+            $sql .= " ON DUPLICATE KEY UPDATE ".rtrim($duplicateString, ", ");
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
+        return $this->pdo->lastInsertId();
     }
 }

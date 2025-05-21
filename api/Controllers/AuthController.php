@@ -36,21 +36,35 @@ class AuthController
                     "password" => $hashPassword
                 ],
                 single: true,
+                fields: [
+                    'user_id',
+                    'email',
+                    'user_name'
+                ],
             );
 
             if($qRes && count($qRes) > 0) {
 
-                $token = TokenGenerator::generateToken(
+                $tokenRes = TokenGenerator::generateToken(
                     userId: $qRes['user_id'],
                     email: $qRes['email'],
                     userName: $qRes['user_name'],
                 );
 
                 $result->setSuccessResult([
-                    'token' => $token,
+                    'token' => $tokenRes['token'],
                     'user' => $qRes
                 ]);
 
+                $this->dataAccess->add(
+                    table: 'users_oauth_token',
+                    requestData: [
+                        'user_id' => $qRes['user_id'],
+                        'token' => $tokenRes['token'],
+                        'issued_at' => $tokenRes['iat'],
+                        'expires_at' => $tokenRes['exp'],
+                    ]
+                );
             }
             else {
                 $result->setInvalidParameters($requestBody);
