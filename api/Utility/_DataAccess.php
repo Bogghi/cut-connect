@@ -88,10 +88,13 @@ class _DataAccess
                 $lessPart = $isString && strlen($value) > 1 && $value[0] === "<" ? "<" : "";
                 $morePart = $isString && strlen($value) > 1 && $value[0] === ">" ? ">" : "";
                 $likePart = $isString && strlen($value) > 1 && $value[0] === "%" && $value[strlen($value) - 1] === "%" ? "LIKE" : "=";
-                $wherePart .= $keyArg . ' ' . $notPart . $lessPart . $morePart . $likePart . ' ? ';
 
                 $value = $isString ? ltrim($value, "!><") : $value;
-                $params[] = $this->interpretField($value);
+                $placeholder = $value === "now" ? "now()" : "?";
+                $wherePart .= $keyArg . ' ' . $notPart . $lessPart . $morePart . $likePart . ' ' . $placeholder . ' ';
+                if($placeholder === "?") {
+                    $params[] = $this->interpretField($value);
+                }
                 $i++;
             }
         }

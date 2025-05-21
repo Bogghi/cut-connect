@@ -2,6 +2,8 @@
 
 namespace App\Utility;
 
+use DateTime;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -26,10 +28,21 @@ abstract class TokenGenerator
         ];
         $token = JWT::encode($payload, self::JWT_SECRET, 'HS256');
 
+        // Create DateTime objects from timestamps
+        try {
+            $iatDateTime = new DateTime("@$iat")->format('Y-m-d H:i:s');
+            $expDateTime = new DateTime("@$exp")->format('Y-m-d H:i:s');
+        } catch (Exception $e) {
+            error_log("Error creating DateTime from timestamp: " . $e->getMessage());
+            return [
+                'error' => 'Failed to create DateTime objects from timestamps.',
+            ];
+        }
+
         return [
             'token' => $token,
-            'iat' => $iat,
-            'exp' => $exp,
+            'iat' => $iatDateTime,
+            'exp' => $expDateTime,
         ];
     }
 }

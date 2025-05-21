@@ -10,7 +10,7 @@ create table users_oauth_token (
     user_oauth_token_id int primary key auto_increment,
     user_id int not null references users(user_id),
     token longtext not null,
-    issued_at varchar(255) not null,
-    expires_at varchar(255) not null,
+    issued_at datetime not null,
+    expires_at datetime not null,
     created_at timestamp default current_timestamp
 );

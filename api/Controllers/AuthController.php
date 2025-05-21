@@ -45,26 +45,42 @@ class AuthController
 
             if($qRes && count($qRes) > 0) {
 
-                $tokenRes = TokenGenerator::generateToken(
-                    userId: $qRes['user_id'],
-                    email: $qRes['email'],
-                    userName: $qRes['user_name'],
+                $oauthRes = $this->dataAccess->get(
+                    table: "users_oauth_token",
+                    args: [
+                        "user_id" => $qRes['user_id'],
+                        "expires_at" => ">now",
+                    ],
+                    single: true,
+                    fields: ['token']
                 );
+
+                if($oauthRes) {
+                    $token = $oauthRes['token'];
+                }
+                else {
+                    $tokenRes = TokenGenerator::generateToken(
+                        userId: $qRes['user_id'],
+                        email: $qRes['email'],
+                        userName: $qRes['user_name'],
+                    );
+                    $token = $tokenRes['token'];
+
+                    $this->dataAccess->add(
+                        table: 'users_oauth_token',
+                        requestData: [
+                            'user_id' => "".$qRes['user_id'],
+                            'token' => $tokenRes['token'],
+                            'issued_at' => $tokenRes['iat'],
+                            'expires_at' => $tokenRes['exp'],
+                        ]
+                    );
+                }
 
                 $result->setSuccessResult([
-                    'token' => $tokenRes['token'],
-                    'user' => $qRes
+                    'token' => $token,
+                    'user' => $qRes,
                 ]);
-
-                $this->dataAccess->add(
-                    table: 'users_oauth_token',
-                    requestData: [
-                        'user_id' => $qRes['user_id'],
-                        'token' => $tokenRes['token'],
-                        'issued_at' => $tokenRes['iat'],
-                        'expires_at' => $tokenRes['exp'],
-                    ]
-                );
             }
             else {
                 $result->setInvalidParameters($requestBody);
