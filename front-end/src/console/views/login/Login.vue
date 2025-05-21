@@ -1,4 +1,6 @@
 <script>
+import API from "@/shared/utils/API.js";
+
 export default {
   name: 'Login',
   methods: {
@@ -6,7 +8,13 @@ export default {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
-
+      if(username && password){
+        API.init().login({
+          username,
+          password,
+          callback: res => console.log(res),
+        });
+      }
     }
   }
 }

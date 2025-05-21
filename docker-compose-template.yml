@@ -14,10 +14,23 @@ services:
 
   php:
     image: php:fpm-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile-php-fpm
     networks:
       - internal
     volumes:
       - ./api/:/var/www/html/API/v1
+
+  mariadb:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: db_name
+    ports:
+      - "3306:3306"
 
 networks:
   internal:

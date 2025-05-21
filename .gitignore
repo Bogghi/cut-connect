@@ -11,6 +11,7 @@ lerna-debug.log*
 /front-end/package-lock.json
 /api/vendor
 /api/composer.lock
+/api/env.php
 .DS_Store
 dist
 dist-ssr
@@ -33,3 +34,4 @@ coverage
 
 *.tsbuildinfo
 docker-compose-db.yml
+docker-compose.yml
