@@ -19,7 +19,6 @@ export default class API {
     forceBlob = false,
   }) {
 
-    let self = this;
     let headers = {
       "Content-type": "application/json; charset=UTF-8",
     };

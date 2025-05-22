@@ -1,19 +1,26 @@
 <script>
-import API from "@/shared/utils/API.js";
+import { useUserStore } from "@/console/stores/user.store.js";
 
 export default {
   name: 'Login',
+  setup() {
+    const userStore = useUserStore();
+    return {
+      userStore
+    };
+  },
   methods: {
     login() {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
       if(username && password){
-        API.init().login({
-          username,
-          password,
-          callback: res => console.log(res),
+        this.userStore.login(username, password, (res) => {
+          alert("Risultato del login: "+res);
         });
+      }
+      else {
+        alert("Inserisci password e username");
       }
     }
   }

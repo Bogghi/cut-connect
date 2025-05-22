@@ -5,7 +5,8 @@ import '@/shared/assets/css/footer.css'
 
 import App from '@/console/App.vue';
 
-import {createApp} from 'vue';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import eventBus from '@/shared/utils/eventBus.js';
 import router from "@/console/router/index.js";
 
@@ -13,14 +14,15 @@ const app = createApp(AppNavBar);
 app.mount("#nav");
 
 eventBus.on('navigation', destination => {
-  console.log('navigatred', destination);
   switch(destination) {
     case 'console':
       document.querySelectorAll('#landing,#footer')
         .forEach(node => node.classList.add('hidden'));
 
       const consoleApp = createApp(App);
+      const pinia = createPinia();
       consoleApp
+        .use(pinia)
         .use(router)
         .mount("#app");
       break;
