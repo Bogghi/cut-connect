@@ -33,5 +33,9 @@ export const useUserStore = defineStore('user', {
         'email': user.email,
       }
     },
+    logout() {
+      localStorage.removeItem('jwt_token');
+      this.user = null;
+    },
   },
 });

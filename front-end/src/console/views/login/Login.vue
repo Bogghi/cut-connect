@@ -16,12 +16,22 @@ export default {
 
       if(username && password){
         this.userStore.login(username, password, (res) => {
-          alert("Risultato del login: "+res);
+          if(res) {
+
+          }
+          else {
+            alert("errore nel login");
+          }
         });
       }
       else {
         alert("Inserisci password e username");
       }
+    }
+  },
+  mounted() {
+    if(localStorage.getItem('jwt_token') !== null) {
+      this.$router.push('/console/home');
     }
   }
 }
