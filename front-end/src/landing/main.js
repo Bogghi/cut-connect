@@ -30,6 +30,7 @@ eventBus.on('navigation', destination => {
       const appElement = document.querySelector('#app');
       if(!!appElement.__vue_app__) {
         appElement.__vue_app__.unmount();
+        router.push('/');
         document.querySelectorAll('#landing,#footer')
           .forEach(node => node.classList.remove('hidden'));
       }

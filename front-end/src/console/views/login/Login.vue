@@ -17,7 +17,7 @@ export default {
       if(username && password){
         this.userStore.login(username, password, (res) => {
           if(res) {
-
+            this.$router.push('/console/home');
           }
           else {
             alert("errore nel login");
