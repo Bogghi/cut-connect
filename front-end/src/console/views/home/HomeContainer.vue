@@ -3,7 +3,13 @@ import { VueCal } from 'vue-cal'
 import 'vue-cal/style'
 import BottomSheet from '@douxcode/vue-spring-bottom-sheet'
 import '@douxcode/vue-spring-bottom-sheet/dist/style.css'
+import { useReservationStore } from "@/console/stores/reservation.store.js";
+
 export default {
+  setup() {
+    const reservationStore = useReservationStore();
+    return { reservationStore }
+  },
   name: 'HomeContainer',
   components: {
     VueCal,
@@ -30,8 +36,19 @@ export default {
   },
   methods: {
     doubleClick(event) {
-      console.log('Double clicked on event:', event.event);
+      this.$refs['bottomSheet'].open();
     },
+    createEvent(event) {
+      const newEvent = {
+        start: event.event.start,
+        end: event.event.end,
+        title: 'Nuovo appuntamento',
+      };
+
+      this.reservationStore.addReservation(newEvent, res => {
+        console.log('Reservation created:', res);
+      });
+    }
   }
 }
 </script>
@@ -41,10 +58,11 @@ export default {
     <vue-cal v-bind="timelineConfig"
              :events="events"
              :time-cell-height="80"
-             style="--vuecal-height: 100%"
+             style="--vuecal-height: 100%; --vuecal-primary-color: var(--main-color);--vuecal-border-radius: 0;"
              :editable-events="{drag: true, resize: true, delete: false, create: true}"
-             @event-dblclick="doubleClick" />
-    <BottomSheet/>
+             @event-dblclick="doubleClick"
+             @event-create="createEvent" />
+    <BottomSheet ref="bottomSheet"> Your awesome content </BottomSheet>
   </div>
 </template>
 

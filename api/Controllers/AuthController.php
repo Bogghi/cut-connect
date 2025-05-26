@@ -8,7 +8,7 @@ use App\Utility\TokenGenerator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class AuthController
+class AuthController extends BaseController
 {
     private _DataAccess $dataAccess;
 
@@ -52,11 +52,21 @@ class AuthController
                         "expires_at" => ">now",
                     ],
                     single: true,
-                    fields: ['token']
+                    fields: ['token','user_oauth_token_id']
                 );
 
                 if($oauthRes) {
+                    $refreshTokenRes = $this->dataAccess->get(
+                        table: "users_oauth_refresh_token",
+                        args: [
+                            "user_id" => $qRes['user_id'],
+                            "expires_at" => ">now",
+                        ],
+                        single: true,
+                        fields: ['refresh_token']
+                    );
                     $token = $oauthRes['token'];
+                    $refreshToken = $refreshTokenRes['refresh_token'];
                 }
                 else {
                     $tokenRes = TokenGenerator::generateToken(
@@ -75,10 +85,28 @@ class AuthController
                             'expires_at' => $tokenRes['exp'],
                         ]
                     );
+
+                    $refreshTokenRes = TokenGenerator::generateRefreshToken(
+                        userId: $qRes['user_id'],
+                        email: $qRes['email'],
+                        userName: $qRes['user_name'],
+                    );
+                    $refreshToken = $refreshTokenRes['refreshToken'];
+
+                    $this->dataAccess->add(
+                        table: 'users_oauth_refresh_token',
+                        requestData: [
+                            'user_id' => "".$qRes['user_id'],
+                            'refresh_token' => $refreshTokenRes['refreshToken'],
+                            'issued_at' => $refreshTokenRes['iat'],
+                            'expires_at' => $refreshTokenRes['exp'],
+                        ]
+                    );
                 }
 
                 $result->setSuccessResult([
                     'token' => $token,
+                    'refreshToken' => $refreshToken,
                     'user' => $qRes,
                 ]);
             }
@@ -89,6 +117,25 @@ class AuthController
         }
         else {
             $result->setInvalidParameters();
+        }
+
+        $response->getBody()->write(json_encode($result->data));
+        return $response
+            ->withStatus($result->statusCode)
+            ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function refresh(Request $request, Response $response, array $args): Response
+    {
+        $result = new Result();
+
+        if($this->validateToken($request)) {
+
+
+
+        }
+        else {
+            $result->setUnauthorized();
         }
 
         $response->getBody()->write(json_encode($result->data));

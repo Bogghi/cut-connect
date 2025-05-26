@@ -2,6 +2,7 @@
 
 use App\Utility\_DataAccess;
 use App\Controllers\AuthController;
+use App\Controllers\ReservationController;
 use Psr\Container\ContainerInterface;
 
 if (!isset($container) || !$container instanceof ContainerInterface) {
@@ -14,4 +15,7 @@ $container->set(_DataAccess::class, function (ContainerInterface $c) {
 });
 $container->set(AuthController::class, function (ContainerInterface $c) {
     return new AuthController($c->get(_DataAccess::class));
+});
+$container->set(ReservationController::class, function (ContainerInterface $c) {
+    return new ReservationController($c->get(_DataAccess::class));
 });

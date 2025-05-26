@@ -1,3 +1,5 @@
+import router from "@/console/router/index.js";
+
 export default class API {
   constructor() {
     this.baseUrl = "/API/v1"
@@ -15,16 +17,14 @@ export default class API {
     data,
     callback,
     callbackError = null,
-    forceText = false,
-    forceBlob = false,
   }) {
 
     let headers = {
       "Content-type": "application/json; charset=UTF-8",
     };
 
-    if(this.hasOwnProperty("oauthToke")) {
-      headers["Authorization"] = "Bearer " + this.oauthToken;
+    if(localStorage.getItem("jwt_token") !== null) {
+      headers["Authorization"] = "Bearer " + localStorage.getItem("jwt_token");
     }
 
     fetch(url, {
@@ -34,9 +34,50 @@ export default class API {
       headers: headers
     })
       .then(response => {
-        response.json().then(data => {
-          callback(data);
-        })
+
+        if(response.status === 200 || response.status === 400) {
+          response.json().then(data => {
+            callback(data);
+          })
+        }
+        else if(response.status === 401) {
+
+          if(localStorage.getItem("refresh_token") !== null) {
+
+            fetch(this.baseUrl+'/refresh', {
+              method: 'POST',
+              cache: 'no-store',
+              headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                "Authorization": "Bearer " + localStorage.getItem("refresh_token")
+              }
+            })
+              .then(response => {
+                response.json().then(data => {
+
+                  if(data.result === "OK") {
+                    localStorage.removeItem("jwt_token");
+                    localStorage.setItem("jwt_token", data.token);
+
+                    this.post({
+                      url: url,
+                      data: data,
+                      callback: callback,
+                      callbackError: callbackError
+                    });
+                  }
+
+                });
+              });
+
+          }
+          else {
+            localStorage.removeItem("jwt_token");
+            localStorage.removeItem("refresh_token");
+            router.push("/console/login");
+          }
+
+        }
       })
       .catch((error) => {
         console.log('Error: ', error);
@@ -54,6 +95,14 @@ export default class API {
     API.init().post({
       url: this.baseUrl + "/login",
       data: data,
+      callback: callback
+    });
+  }
+
+  addReservation({reservation, callback}) {
+    API.init().post({
+      url: this.baseUrl + "/reservation/add",
+      data: reservation,
       callback: callback
     });
   }

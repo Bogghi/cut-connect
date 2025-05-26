@@ -16,6 +16,7 @@ export const useUserStore = defineStore('user', {
 
           if (res.status === 'OK') {
             localStorage.setItem('jwt_token', res.token);
+            localStorage.setItem('refresh_token', res.refreshToken);
             this.user = this.normalizeUser(res.user);
             callback && callback(true);
           }

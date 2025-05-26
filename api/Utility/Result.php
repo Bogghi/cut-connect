@@ -18,10 +18,19 @@ class Result
     {
         $this->data['status'] = self::KO;
         $this->data['message'] = 'Invalid parameters ';
-        $this->statusCode = 401;
+        $this->statusCode = 400;
         if($parameters) {
             $this->data['message'] .= implode(',', $parameters);
         }
+        return $this;
+    }
+
+    public function setUnauthorized(): self
+    {
+        $this->data['status'] = self::KO;
+        $this->data['message'] = 'Unauthorized';
+        $this->statusCode = 401;
+
         return $this;
     }
 
