@@ -44,4 +44,13 @@ class Result
 
         return $this;
     }
+
+    public function setGenericError(mixed $data): self
+    {
+        $this->data['status'] = self::KO;
+        $this->statusCode = 500;
+        $this->data['message'] = 'An error occurred '.json_encode($data, JSON_UNESCAPED_UNICODE);
+
+        return $this;
+    }
 }

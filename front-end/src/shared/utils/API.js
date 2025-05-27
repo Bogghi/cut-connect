@@ -53,11 +53,11 @@ export default class API {
               }
             })
               .then(response => {
-                response.json().then(data => {
+                response.json().then(freshData => {
 
-                  if(data.result === "OK") {
+                  if(freshData.status === "OK") {
                     localStorage.removeItem("jwt_token");
-                    localStorage.setItem("jwt_token", data.token);
+                    localStorage.setItem("jwt_token", freshData.token);
 
                     this.post({
                       url: url,

@@ -21,7 +21,32 @@ class ReservationController extends BaseController
         $result = new Result();
 
         if($this->validateToken($request)) {
-            
+
+            $requestBody = $request->getParsedBody();
+
+            $reservationDate = $requestBody['reservation_date'] ?? null;
+            $start = $requestBody['start'] ?? null;
+            $end = $requestBody['end'] ?? null;
+
+            $this->dataAccess->debug = true;
+            $reservationId = $this->dataAccess->add(
+                table: 'reservations',
+                requestData: [
+                    'user_id' => $this->userId,
+                    'reservation_date' => $reservationDate,
+                    'start_time' => $start,
+                    'end_time' => $end
+                ]
+            );
+
+            if($reservationId) {
+                $result->setSuccessResult([
+                    'reservation_id' => $reservationId,
+                ]);
+            }
+            else {
+                $result->setGenericError($reservationId);
+            }
         }
         else {
             $result->setUnauthorized();

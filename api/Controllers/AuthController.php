@@ -131,7 +131,28 @@ class AuthController extends BaseController
 
         if($this->validateToken($request)) {
 
+            $tokenRes = TokenGenerator::generateToken(
+                userId: $this->userId,
+                email: $this->email,
+                userName: $this->username,
+            );
 
+
+            $this->dataAccess->customQuery(
+                query: "delete from users_oauth_token where user_id = ?;",
+                params: [$this->userId]
+            );
+            $this->dataAccess->add(
+                table: 'users_oauth_token',
+                requestData: [
+                    'token' => $tokenRes['token'],
+                    'issued_at' => $tokenRes['iat'],
+                    'expires_at' => $tokenRes['exp'],
+                    'user_id' => "".$this->userId,
+                ],
+            );
+
+            $result->setSuccessResult(['token' => $tokenRes['token']]);
 
         }
         else {

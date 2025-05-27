@@ -7,6 +7,8 @@ class _DataAccess
 {
     protected ?PDO $pdo;
 
+    public bool $debug = false;
+
     public function __construct(?PDO $pdo = null) {
         $this->pdo = $pdo;
     }
@@ -136,6 +138,13 @@ class _DataAccess
         $stmt = $this->pdo->prepare($sql);
         $exec = $stmt->execute($params);
 
+        if($this->debug) {
+            ob_start();
+            $stmt->debugDumpParams();
+            error_log("DataAccess get debug: ".ob_get_clean());
+            $this->debug = false;
+        }
+
         if ($exec) {
             $result = $single ? $stmt->fetch($fetchMode) : $stmt->fetchAll($fetchMode);
 
@@ -157,7 +166,7 @@ class _DataAccess
         return $result;
     }
 
-    public function add($table, $requestData, $duplicateUpdateKey = false)
+    public function add($table, $requestData, $duplicateUpdateKey = false): false|string
     {
 
         $this->connectPdo();
@@ -226,6 +235,33 @@ class _DataAccess
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
 
+        if($this->debug) {
+            ob_start();
+            $stmt->debugDumpParams();
+            error_log("DataAccess add debug: ".ob_get_clean());
+            $this->debug = false;
+        }
+
         return $this->pdo->lastInsertId();
+    }
+
+    public function customQuery($query, $params, $rowCount = false): false|int|\PDOStatement
+    {
+
+        if(!$this->pdo) {
+            $this->connectPdo();
+        }
+        $stmt = $this->pdo->prepare($query);
+
+        $paramsReal = array_map(function ($value) {
+            return $this->interpretField($value);
+        }, $params);
+        $execResult = $stmt->execute($paramsReal);
+
+        if ($execResult && $rowCount) {
+            return $stmt->rowCount();
+        } else {
+            return $stmt;
+        }
     }
 }

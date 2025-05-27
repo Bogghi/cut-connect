@@ -4,6 +4,7 @@ import 'vue-cal/style'
 import BottomSheet from '@douxcode/vue-spring-bottom-sheet'
 import '@douxcode/vue-spring-bottom-sheet/dist/style.css'
 import { useReservationStore } from "@/console/stores/reservation.store.js";
+import { getUTCTimeString, getUTCDateString } from "@/shared/utils/helpers-function.js";
 
 export default {
   setup() {
@@ -38,10 +39,11 @@ export default {
     doubleClick(event) {
       this.$refs['bottomSheet'].open();
     },
-    createEvent(event) {
+    createEvent(eventObj) {
       const newEvent = {
-        start: event.event.start,
-        end: event.event.end,
+        reservation_date: getUTCDateString(eventObj.event.start),
+        start: getUTCTimeString(eventObj.event.start),
+        end: getUTCTimeString(eventObj.event.end),
         title: 'Nuovo appuntamento',
       };
 
