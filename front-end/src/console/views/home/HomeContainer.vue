@@ -51,6 +51,17 @@ export default {
         console.log('Reservation created:', res);
       });
     }
+  },
+  mounted() {
+    this.reservationStore.getReservations({
+      'window_type': 'day',
+      'start': getUTCDateString(new Date()),
+      'callback': res => {
+        if(!res) {
+          alert('Error nel caricamento delle prenotazioni');
+        }
+      }
+    });
   }
 }
 </script>

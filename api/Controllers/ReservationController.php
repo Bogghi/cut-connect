@@ -57,4 +57,69 @@ class ReservationController extends BaseController
             ->withStatus($result->statusCode)
             ->withHeader('Content-Type', 'application/json');
     }
+
+    public function getReservations(Request $request, Response $response, array $args): Response
+    {
+        $result = new Result();
+
+        if(!$this->validateToken($request)) {
+            $result->setUnauthorized();
+        }
+        else {
+
+            $requestBody = $request->getParsedBody();
+
+            if(!isset($requestBody['start']) && !isset($requestBody['window_type'])) {
+                $result->setUnauthorized();
+            }
+            else {
+
+                $start = $requestBody['start'];
+                $end = $requestBody['end'] ?? null;
+                $windowType = $requestBody['window_type'];
+                $reservations = null;
+
+                switch($windowType) {
+                    case 'day':
+                        $reservations = $this->dataAccess->get(
+                            table: 'reservations',
+                            args: ['reservation_date' => $start],
+                            fields: ['reservations.*', 'users.user_name'],
+                            join: ['users' => 'user_id'],
+                        );
+                        break;
+                    case 'week':
+                        if(!$end) {
+                            $result->setInvalidParameters();
+                        }
+                        else {
+                            $reservations = $this->dataAccess->get(
+                                table: 'reservations',
+                                args: [
+                                    'reservation_date' => ">$start",
+                                    'end_date' => "<$end",
+                                ],
+                                fields: ['reservations.*', 'users.user_name'],
+                                join: ['users' => 'user_id'],
+                            );
+                        }
+                        break;
+                    default:
+                        $result->setInvalidParameters();
+                        break;
+                }
+
+                $data = ['reservations' => $reservations];
+                $result->statusCode === 200 ?
+                    $result->setSuccessResult($data) :
+                    $result->setData($data);
+            }
+
+        }
+
+        $response->getBody()->write(json_encode($result->data));
+        return $response
+            ->withStatus($result->statusCode)
+            ->withHeader('Content-Type', 'application/json');
+    }
 }

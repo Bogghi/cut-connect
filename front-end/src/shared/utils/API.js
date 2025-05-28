@@ -106,4 +106,20 @@ export default class API {
       callback: callback
     });
   }
+
+  getReservations({window_type, start, end, callback}) {
+
+    let data = {
+      'window_type': window_type,
+      'start': start,
+    };
+    if(end) {
+      data['end'] = end;
+    }
+    API.init().post({
+      url: this.baseUrl + "/reservations/get",
+      data: data,
+      callback: callback
+    });
+  }
 }

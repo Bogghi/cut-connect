@@ -45,6 +45,12 @@ class Result
         return $this;
     }
 
+    public function setData(?array $array): self
+    {
+        $this->data = [...$this->data, ...$array];
+        return $this;
+    }
+
     public function setGenericError(mixed $data): self
     {
         $this->data['status'] = self::KO;
