@@ -20,24 +20,23 @@ export const useReservationStore = defineStore("reservation", {
         reservation,
         callback: res => {
           if (res.status === "OK") {
-            this.getReservations({
-              start: this.viewWindow.start,
-              end: this.viewWindow.end,
-              callback: getRes => {
-                this.currentReservationId = res.res.reservation_id;
-                callback && callback(true, getRes);
-              }
-            });
+             callback(true, res.reservation_id);
           } else {
             callback && callback(false);
           }
         }
       });
     },
+    deleteReservation(callback) {
+      if(!this.currentReservationId) {
+        callback && callback(false);
+        return;
+      }
+
+      API.init().deleteReservation({reservationId: this.currentReservationId, callback: callback});
+    },
     getReservations({ start, end = null, callback }) {
       let self = this;
-      this.viewWindow.start = start;
-      this.viewWindow.end = end || start;
       API.init().getReservations({
         window_type: self.windowType,
         start,
@@ -60,6 +59,8 @@ export const useReservationStore = defineStore("reservation", {
         // Convert UTC strings to Date objects
         const startUtcDate = new Date(startUtcString);
         const endUtcDate = new Date(endUtcString);
+
+        console.log("start", startUtcDate, "end", endUtcDate);
 
         // Convert the UTC Date objects to CET
         const startDateObjCET = convertUtcToCet(startUtcDate);

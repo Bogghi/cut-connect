@@ -25,6 +25,8 @@ export default {
         timeFrom: 8*60,
         timeTo: 20*60,
       },
+      windowStart: getUTCDateString(new Date()),
+      windowEnd: null,
     };
   },
   computed: {
@@ -53,26 +55,61 @@ export default {
         title: 'Nuovo appuntamento',
       };
 
-      this.reservationStore.addReservation(newEvent, (addRes, refreshRes) => {
-        if(addRes && refreshRes){
-          this.$refs['bottomSheet'].open(this.reservationStore.getCurrentReservation);
+      this.reservationStore.addReservation(newEvent, (res, reservationId) => {
+        if(res){
+          this.reservationStore.currentReservationId = reservationId;
+          this.refresh(null, res => {
+            if(res) {
+              this.$refs['bottomSheet'].open(this.reservationStore.getCurrentReservation);
+            }
+            else {
+              alert('Errore durante la creazione della prenotazione');
+            }
+          })
         }
         else {
           alert('Errore durante la creazione della prenotazione');
         }
       });
+    },
+    deleteReservation() {
+      this.reservationStore.deleteReservation(res => {
+        if(res.status === 'OK') {
+          this.refresh(null, res => {
+            if(res) {
+              this.$refs['bottomSheet'].close();
+            }
+            else {
+              alert('Errore nella cancellazione della prenotazione');
+            }
+          });
+        }
+        else {
+          alert('Errore nella cancellazione della prenotazione');
+        }
+      });
+    },
+    refresh(end = null, callback = null) {
+      let params = {
+        start: this.windowStart,
+        callback: !callback ? res => {
+          if(!res) {
+            alert('Error nel caricamento delle prenotazioni');
+          }
+        } : callback
+      };
+      if(end) {
+        this.windowEnd = end;
+        params['end'] = this.windowEnd;
+      }
+      else if(this.reservationStore.windowType === 'week' && this.windowEnd !== null) {
+        params['end'] = this.windowEnd;
+      }
+      this.reservationStore.getReservations(params);
     }
   },
   mounted() {
-    this.reservationStore.getReservations({
-      'window_type': this.reservationStore.window_type,
-      'start': getUTCDateString(new Date()),
-      'callback': res => {
-        if(!res) {
-          alert('Error nel caricamento delle prenotazioni');
-        }
-      }
-    });
+    this.refresh()
   }
 }
 </script>
@@ -87,12 +124,29 @@ export default {
              @event-dblclick="e => doubleClick(e.event)"
              @event-create="createEvent" />
     <BottomSheet ref="bottomSheet">
-      <h3>Dettagli prenotazione</h3>
+      <div class="reservation-info-container">
+        <h3>Dettagli prenotazione</h3>
+        <div class="reservation-actions">
+          <button class="btn btn-danger" @click="deleteReservation">Cancella</button>
+          <button class="btn btn-success">Salva</button>
+        </div>
+      </div>
     </BottomSheet>
   </div>
 </template>
 
 <style scoped>
+.reservation-info-container {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  .reservation-actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
 .home-container {
   width: 100vw;
   height: calc(100vh - 70px);

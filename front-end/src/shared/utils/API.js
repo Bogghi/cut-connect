@@ -107,6 +107,16 @@ export default class API {
     });
   }
 
+  deleteReservation({reservationId, callback}) {
+    API.init().post({
+      url: this.baseUrl + "/reservation/delete",
+      data: {
+        reservation_id: reservationId,
+      },
+      callback: callback
+    });
+  }
+
   getReservations({window_type, start, end, callback}) {
 
     let data = {
@@ -121,5 +131,6 @@ export default class API {
       data: data,
       callback: callback
     });
+
   }
 }

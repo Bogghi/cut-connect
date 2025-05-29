@@ -245,6 +245,44 @@ class _DataAccess
         return $this->pdo->lastInsertId();
     }
 
+    public function delete($table, $args) {
+
+        $this->connectPdo();
+
+        $params = [];
+        $wherePart = $this->queryWherePart($args, $params);
+
+        $sql = "DELETE FROM " . $table . $wherePart;
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute($params);
+
+        return $stmt->rowCount() > 0;
+    }
+
+    private function queryWherePart($args, &$params): string {
+        $wherePart = "";
+        if (!empty($args)) {
+            $wherePart = ' WHERE ';
+            $i = 0;
+            foreach ($args as $keyArg => $value) {
+                if ($i !== 0) {
+                    $wherePart .= 'AND ';
+                }
+                if ($value === null) {
+                    $wherePart .= $keyArg . ' IS NULL ';
+                    $i++;
+                    continue;
+                }
+                $wherePart .= $keyArg . ' = ? ';
+                $params[] = $value;
+                $i++;
+            }
+        }
+        return $wherePart;
+    }
+
     public function customQuery($query, $params, $rowCount = false): false|int|\PDOStatement
     {
 

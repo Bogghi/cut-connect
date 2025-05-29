@@ -34,7 +34,7 @@ class Result
         return $this;
     }
 
-    public function setSuccessResult(?array $array): self
+    public function setSuccessResult(?array $array = null): self
     {
         $this->data['status'] = self::OK;
 
@@ -51,7 +51,7 @@ class Result
         return $this;
     }
 
-    public function setGenericError(mixed $data): self
+    public function setGenericError(mixed $data = null): self
     {
         $this->data['status'] = self::KO;
         $this->statusCode = 500;

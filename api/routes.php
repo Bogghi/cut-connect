@@ -15,6 +15,7 @@ $app->group('/API/v1', function(RouteCollectorProxy $group) {
 
     // single reservation endpoints
     $group->post('/reservation/add', ReservationController::class . ':addReservation');
+    $group->post('/reservation/delete', ReservationController::class . ':deleteReservation');
 
     // reservations endpoints
     $group->post('/reservations/get', ReservationController::class . ':getReservations');
