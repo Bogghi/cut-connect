@@ -57,14 +57,9 @@ export const useReservationStore = defineStore("reservation", {
         const endUtcString = `${reservation.reservation_date}T${reservation.end_time}Z`;
 
         // Convert UTC strings to Date objects
-        const startUtcDate = new Date(startUtcString);
-        const endUtcDate = new Date(endUtcString);
+        const startDateObjCET = new Date(startUtcString);
+        const endDateObjCET = new Date(endUtcString);
 
-        console.log("start", startUtcDate, "end", endUtcDate);
-
-        // Convert the UTC Date objects to CET
-        const startDateObjCET = convertUtcToCet(startUtcDate);
-        const endDateObjCET = convertUtcToCet(endUtcDate);
         return {
           ...reservation,
           startDateObj: startDateObjCET,
