@@ -6,7 +6,12 @@ export const useReservationStore = defineStore("reservation", {
   state: () => {
     return {
       reservations: [],
-      windowType: "day"
+      windowType: "day",
+      currentReservationId: null,
+      viewWindow: {
+        start: null,
+        end: null
+      }
     };
   },
   actions: {
@@ -15,22 +20,31 @@ export const useReservationStore = defineStore("reservation", {
         reservation,
         callback: res => {
           if (res.status === "OK") {
-            callback && callback(true);
+            this.getReservations({
+              start: this.viewWindow.start,
+              end: this.viewWindow.end,
+              callback: getRes => {
+                this.currentReservationId = res.res.reservation_id;
+                callback && callback(true, getRes);
+              }
+            });
           } else {
             callback && callback(false);
           }
         }
       });
     },
-    getReservations({ window_type, start, end = null, callback }) {
+    getReservations({ start, end = null, callback }) {
+      let self = this;
+      this.viewWindow.start = start;
+      this.viewWindow.end = end || start;
       API.init().getReservations({
-        window_type,
+        window_type: self.windowType,
         start,
         end,
         callback: res => {
           if (res.status === "OK") {
             this.reservations = this.normalizeReservations(res.reservations);
-            this.windowType = window_type;
             callback && callback(true);
           } else {
             callback && callback(false);
@@ -56,6 +70,11 @@ export const useReservationStore = defineStore("reservation", {
           endDateObj: endDateObjCET,
         };
       });
+    }
+  },
+  getters: {
+    getCurrentReservation(state) {
+      return state.reservations.find(reservation => reservation.reservation_id === state.currentReservationId);
     }
   }
 });

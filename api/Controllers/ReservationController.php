@@ -74,7 +74,7 @@ class ReservationController extends BaseController
             }
             else {
 
-                $start = $requestBody['start'];
+                $start = $requestBody['start'] ?? null;
                 $end = $requestBody['end'] ?? null;
                 $windowType = $requestBody['window_type'];
                 $reservations = null;
@@ -90,7 +90,7 @@ class ReservationController extends BaseController
                         break;
                     case 'week':
                         if(!$end) {
-                            $result->setInvalidParameters();
+                            $result->setInvalidParameters(['no end']);
                         }
                         else {
                             $reservations = $this->dataAccess->get(
@@ -105,7 +105,7 @@ class ReservationController extends BaseController
                         }
                         break;
                     default:
-                        $result->setInvalidParameters();
+                        $result->setInvalidParameters(['no type']);
                         break;
                 }
 
