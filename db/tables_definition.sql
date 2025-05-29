@@ -40,8 +40,10 @@ create table reservations (
     reservation_date date not null,
     start_time time not null,
     end_time time not null,
+    client_name varchar(255),
     description varchar(255),
     phone_number varchar(20),
+    value int not null default 0,
     status enum('pending', 'confirmed', 'cancelled', 'completed') default 'pending',
     payment_type enum('cash', 'card', 'satispay'),
     created_at timestamp default current_timestamp
