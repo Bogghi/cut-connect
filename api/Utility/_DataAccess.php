@@ -30,7 +30,7 @@ class _DataAccess
 
     public function get(
         $table,
-        $args,
+        $args = [],
         $single = false,
         $fields = null,
         $join = null,

@@ -2,21 +2,28 @@
 
 use App\Controllers\AuthController;
 use App\Controllers\ReservationController;
+use App\Controllers\UserController;
 use Slim\Routing\RouteCollectorProxy;
 
 if(!isset($app)) {
     exit();
 }
 
-$app->group('/API/v1', function(RouteCollectorProxy $group) {
-    // authentication endpoints
-    $group->post('/login', AuthController::class . ':login');
-    $group->post('/refresh', AuthController::class . ':refresh');
+const BASE_ROUTE = '/API/v1';
 
-    // single reservation endpoints
-    $group->post('/reservation/add', ReservationController::class . ':addReservation');
-    $group->post('/reservation/delete', ReservationController::class . ':deleteReservation');
+$app->post(BASE_ROUTE.'/login', AuthController::class . ':login');
+$app->get(BASE_ROUTE.'/refresh', AuthController::class . ':refresh');
+$app->post(BASE_ROUTE.'/reservations/get', ReservationController::class . ':getReservations');
 
-    // reservations endpoints
-    $group->post('/reservations/get', ReservationController::class . ':getReservations');
+$app->group(BASE_ROUTE.'/reservation', function(RouteCollectorProxy $group) {
+
+    $group->post('/add', ReservationController::class . ':addReservation');
+    $group->post('/delete', ReservationController::class . ':deleteReservation');
+
+});
+
+$app->group(BASE_ROUTE.'/users', function(RouteCollectorProxy $group) {
+
+    $group->get('/get', UserController::class . ':get');
+
 });

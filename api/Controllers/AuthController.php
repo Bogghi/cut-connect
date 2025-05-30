@@ -69,6 +69,16 @@ class AuthController extends BaseController
                     $refreshToken = $refreshTokenRes['refresh_token'];
                 }
                 else {
+                    $this->dataAccess->delete(
+                        table: "users_oauth_token",
+                        args: ['user_id' => $qRes['user_id']],
+                    );
+                    $this->dataAccess->delete(
+                        table: "users_oauth_refresh_token",
+                        args: ['user_id' => $qRes['user_id']],
+                    );
+
+
                     $tokenRes = TokenGenerator::generateToken(
                         userId: $qRes['user_id'],
                         email: $qRes['email'],
@@ -107,7 +117,7 @@ class AuthController extends BaseController
                 $result->setSuccessResult([
                     'token' => $token,
                     'refreshToken' => $refreshToken,
-                    'user' => $qRes,
+                    'user_id' => $qRes['user_id'],
                 ]);
             }
             else {

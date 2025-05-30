@@ -1,10 +1,10 @@
 <script>
-import { useUserStore } from "@/console/stores/user.store.js";
+import { useUsersStore } from "@/console/stores/index.js";
 
 export default {
   name: 'Login',
   setup() {
-    const userStore = useUserStore();
+    const userStore = useUsersStore();
     return {
       userStore
     };

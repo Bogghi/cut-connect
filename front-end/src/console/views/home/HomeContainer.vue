@@ -3,13 +3,14 @@ import { VueCal } from 'vue-cal'
 import 'vue-cal/style'
 import BottomSheet from '@douxcode/vue-spring-bottom-sheet'
 import '@douxcode/vue-spring-bottom-sheet/dist/style.css'
-import { useReservationStore } from "@/console/stores/reservation.store.js";
+import { useReservationStore, useUsersStore } from "@/console/stores/index.js";
 import { getUTCTimeString, getUTCDateString } from "@/shared/utils/helpers-function.js";
 
 export default {
   setup() {
     const reservationStore = useReservationStore();
-    return { reservationStore }
+    const userStore = useUsersStore();
+    return { reservationStore, userStore }
   },
   name: 'HomeContainer',
   components: {
@@ -24,6 +25,9 @@ export default {
         view: 'day',
         timeFrom: 8*60,
         timeTo: 20*60,
+        snapToInterval: 30,
+        timeCellHeight: 80,
+        editableEvents: {drag: true, resize: true, delete: false, create: true}
       },
       windowStart: getUTCDateString(new Date()),
       windowEnd: null,
@@ -47,25 +51,24 @@ export default {
       this.reservationStore.currentReservationId = event.reservation_id;
       this.$refs['bottomSheet'].open();
     },
-    createEvent(eventObj) {
+    createEvent({ event, resolve }) {
+      const title = 'Nuovo appuntamento';
       const newEvent = {
-        reservation_date: getUTCDateString(eventObj.event.start),
-        start: getUTCTimeString(eventObj.event.start),
-        end: getUTCTimeString(eventObj.event.end),
-        title: 'Nuovo appuntamento',
+        reservation_date: getUTCDateString(event.start),
+        start: getUTCTimeString(event.start),
+        end: getUTCTimeString(event.end),
+        title: title,
       };
 
       this.reservationStore.addReservation(newEvent, (res, reservationId) => {
         if(res){
           this.reservationStore.currentReservationId = reservationId;
-          this.refresh(null, res => {
-            if(res) {
-              this.$refs['bottomSheet'].open(this.reservationStore.getCurrentReservation);
-            }
-            else {
-              alert('Errore durante la creazione della prenotazione');
-            }
-          })
+          resolve({
+            ...event,
+            reservation_id: reservationId,
+            title: title
+          });
+          this.$refs['bottomSheet'].open(this.reservationStore.getCurrentReservation);
         }
         else {
           alert('Errore durante la creazione della prenotazione');
@@ -109,23 +112,27 @@ export default {
     }
   },
   mounted() {
-    this.refresh()
+    this.refresh();
+    this.userStore.loadUserInfo(res => {
+      if(!res) {
+        console.error('Errore nel caricamento degli utenti');
+      }
+    });
   }
 }
 </script>
 
 <template>
   <div class="home-container">
-    <vue-cal v-bind="timelineConfig"
+    <vue-cal ref="vue-cal"
+             v-bind="timelineConfig"
              :events="reservations"
-             :time-cell-height="80"
              style="--vuecal-height: 100%; --vuecal-primary-color: var(--main-color);--vuecal-border-radius: 0;"
-             :editable-events="{drag: true, resize: true, delete: false, create: true}"
              @event-dblclick="e => doubleClick(e.event)"
              @event-create="createEvent" />
     <BottomSheet ref="bottomSheet">
       <div class="reservation-info-container">
-        <h3>Dettagli prenotazione</h3>
+        <h3>Prenotazione</h3>
         <div class="reservation-actions">
           <button class="btn btn-danger" @click="deleteReservation">Cancella</button>
           <button class="btn btn-success">Salva</button>

@@ -12,12 +12,30 @@ export default class API {
     return API.instance;
   }
 
-  post({
+  post(params)
+  {
+    this.fetchWrapper({
+      method: "POST",
+      ...params
+    })
+  }
+
+  get(params)
+  {
+    this.fetchWrapper({
+      method: "GET",
+      ...params
+    })
+  }
+
+  fetchWrapper({
+    method,
     url,
     data,
     callback,
     callbackError = null,
-  }) {
+  })
+  {
 
     let headers = {
       "Content-type": "application/json; charset=UTF-8",
@@ -27,12 +45,15 @@ export default class API {
       headers["Authorization"] = "Bearer " + localStorage.getItem("jwt_token");
     }
 
-    fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(data),
+    const fetchOptions = {
+      method: method,
       cache: "no-store",
       headers: headers
-    })
+    }
+    if(method === "POST" && data) {
+      fetchOptions.body = JSON.stringify(data);
+    }
+    fetch(url, fetchOptions)
       .then(response => {
 
         if(response.status === 200 || response.status === 400) {
@@ -45,7 +66,7 @@ export default class API {
           if(localStorage.getItem("refresh_token") !== null) {
 
             fetch(this.baseUrl+'/refresh', {
-              method: 'POST',
+              method: 'GET',
               cache: 'no-store',
               headers: {
                 "Content-type": "application/json; charset=UTF-8",
@@ -92,15 +113,24 @@ export default class API {
       username: username,
       password: password
     }
-    API.init().post({
+    this.post({
       url: this.baseUrl + "/login",
       data: data,
       callback: callback
     });
   }
 
+  loadUserInfo({callback}) {
+
+    this.get({
+      url: this.baseUrl + "/users/get",
+      callback: callback
+    });
+
+  }
+
   addReservation({reservation, callback}) {
-    API.init().post({
+    this.post({
       url: this.baseUrl + "/reservation/add",
       data: reservation,
       callback: callback
@@ -108,7 +138,7 @@ export default class API {
   }
 
   deleteReservation({reservationId, callback}) {
-    API.init().post({
+    this.post({
       url: this.baseUrl + "/reservation/delete",
       data: {
         reservation_id: reservationId,
@@ -126,7 +156,7 @@ export default class API {
     if(end) {
       data['end'] = end;
     }
-    API.init().post({
+    this.post({
       url: this.baseUrl + "/reservations/get",
       data: data,
       callback: callback
