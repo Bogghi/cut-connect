@@ -80,12 +80,19 @@ export default class API {
                     localStorage.removeItem("jwt_token");
                     localStorage.setItem("jwt_token", freshData.token);
 
-                    this.post({
+                    const retryBody = {
                       url: url,
-                      data: data,
                       callback: callback,
                       callbackError: callbackError
-                    });
+                    };
+
+                    if(method === "POST") {
+                      retryBody.data = data;
+                      this.post(retryBody);
+                    }
+                    else{
+                      this.get(retryBody)
+                    }
                   }
 
                 });
@@ -159,6 +166,16 @@ export default class API {
     this.post({
       url: this.baseUrl + "/reservations/get",
       data: data,
+      callback: callback
+    });
+
+  }
+
+  updateReservation({reservation, callback}) {
+
+    this.post({
+      url: this.baseUrl + "/reservation/update",
+      data: reservation,
       callback: callback
     });
 

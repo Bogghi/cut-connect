@@ -44,7 +44,7 @@ export default {
           content: reservation.description
         };
       });
-    }
+    },
   },
   methods: {
     doubleClick(event) {
@@ -74,6 +74,27 @@ export default {
           alert('Errore durante la creazione della prenotazione');
         }
       });
+    },
+    saveChanges() {
+      const reservationData = {}
+      let formNodes = document.querySelectorAll('.form-group input,select,textarea');
+
+      for(let i = 0; i < formNodes.length; i++) {
+        reservationData[formNodes[i].id] = formNodes[i].value;
+      }
+
+      this.reservationStore.updateReservation(
+        reservationData,
+        res => {
+          if(res) {
+            this.$refs['bottomSheet'].close();
+            this.refresh();
+          }
+          else {
+            alert("Errore durante il salvataggio delle modifiche alla prenotazione");
+          }
+        }
+      );
     },
     deleteReservation() {
       this.reservationStore.deleteReservation(res => {
@@ -135,49 +156,56 @@ export default {
         <h3>Prenotazione</h3>
         <div class="reservation-details">
           <div class="form-group">
-            <label for="barbiere">Barbiere</label>
-            <select id="barbiere" name="barbiere">
-              <option selected disabled>Seleziona un barbiere</option>
-              <option value="mario_rossi">Mario Rossi</option>
-              <option value="luca_bianchi">Luca Bianchi</option>
-              <option value="paolo_verdi">Paolo Verdi</option>
+            <label for="user_id">Barbiere</label>
+            <select id="user_id" name="barbiere">
+              <option v-for="user in userStore.users" :value="user.user_id"
+                :selected="user.user_id === reservationStore.getCurrentReservation.user_id">
+                {{user.username}}
+              </option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="data">Data</label>
-            <input type="date" id="data" name="data" required>
+            <label for="reservation_date">Data</label>
+            <input type="date" id="reservation_date" name="data" required
+                   :value="reservationStore.getCurrentReservation.reservation_date">
           </div>
 
           <div class="form-group">
-            <label for="ora_inizio">Ora Inizio</label>
-            <input type="time" id="ora_inizio" name="ora_inizio" required>
+            <label for="start_time">Ora Inizio</label>
+            <input type="time" id="start_time" name="ora_inizio" required
+                   :value="reservationStore.getCurrentReservation.formattedStartTime">
           </div>
 
           <div class="form-group">
-            <label for="ora_fine">Ora Fine (stimata)</label>
-            <input type="time" id="ora_fine" name="ora_fine" required>
+            <label for="end_time">Ora Fine (stimata)</label>
+            <input type="time" id="end_time" name="end_time" required
+                   :value="reservationStore.getCurrentReservation.formattedEndTime">
           </div>
 
           <div class="form-group">
-            <label for="nome_cliente">Nome del Cliente</label>
-            <input type="text" id="nome_cliente" name="nome_cliente" placeholder="Es. Mario Rossi" required>
+            <label for="client_name">Nome del Cliente</label>
+            <input type="text" id="client_name" name="client_name" placeholder="Es. Mario Rossi" required
+                   :value="reservationStore.getCurrentReservation.client_name">
           </div>
 
           <div class="form-group">
-            <label for="numero_telefono">Numero di Telefono</label>
-            <input type="tel" id="numero_telefono" name="numero_telefono" placeholder="Es. 3331234567" pattern="[0-9]{8,10}" title="Inserisci un numero di telefono valido (8-10 cifre)">
+            <label for="phone_number">Numero di Telefono</label>
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Es. 3331234567" pattern="[0-9]{8,10}"
+                   title="Inserisci un numero di telefono valido (8-10 cifre)"
+                   :value="reservationStore.getCurrentReservation.phone_number">
           </div>
 
           <div class="form-group">
-            <label for="descrizione">Descrizione (opzionale)</label>
-            <textarea id="descrizione" name="descrizione" rows="4" placeholder="Eventuali note o preferenze..."></textarea>
+            <label for="description">Descrizione (opzionale)</label>
+            <textarea id="description" name="description" rows="4" placeholder="Eventuali note o preferenze..."
+                      :value="reservationStore.getCurrentReservation.description"></textarea>
           </div>
 
         </div>
         <div class="reservation-actions">
           <button class="btn btn-danger" @click="deleteReservation">Cancella</button>
-          <button class="btn btn-success">Salva</button>
+          <button class="btn btn-success" @click="saveChanges">Salva</button>
         </div>
       </div>
     </BottomSheet>
@@ -202,10 +230,15 @@ export default {
         border: 1px solid #d1d5db; /* Gray border */
         font-size: 14px;
         border-radius: 5px; /* Rounded corners for inputs */
-        display: block;
-        width: 100%;
-        padding: 0.75rem; /* Padding inside inputs */
+        padding: 10px; /* Padding inside inputs */
         transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      }
+
+      textarea {
+        border: 1px solid #d1d5db; /* Gray border */
+        font-size: 14px;
+        border-radius: 5px; /* Rounded corners for inputs */
+        padding: 10px;
       }
     }
   }

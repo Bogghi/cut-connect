@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import API from "@/shared/utils/API.js";
-import { convertUtcToCet } from "@/shared/utils/helpers-function.js";
+import { getUTCDateString, getUTCTimeString } from "@/shared/utils/helpers-function.js";
 
 export const useReservationStore = defineStore("reservation", {
   state: () => {
@@ -35,6 +35,28 @@ export const useReservationStore = defineStore("reservation", {
 
       API.init().deleteReservation({reservationId: this.currentReservationId, callback: callback});
     },
+    updateReservation(reservation, callback) {
+
+      let self = this;
+      let data = {
+        ...reservation,
+        reservation_id: self.currentReservationId,
+      };
+      let startDateDB = new Date(reservation.reservation_date+" " + reservation.start_time);
+      let endDateDB = new Date(reservation.reservation_date+" " + reservation.end_time);
+
+      data.reservation_date = getUTCDateString(startDateDB);
+      data.start_time = getUTCTimeString(startDateDB);
+      data.end_time = getUTCTimeString(endDateDB);
+
+      API.init().updateReservation({
+        reservation: data,
+        callback: res => {
+          callback && callback(res.status === "OK");
+        }
+      });
+
+    },
     getReservations({ start, end = null, callback }) {
       let self = this;
       API.init().getReservations({
@@ -60,10 +82,25 @@ export const useReservationStore = defineStore("reservation", {
         const startDateObjCET = new Date(startUtcString);
         const endDateObjCET = new Date(endUtcString);
 
+        const startHour = startDateObjCET.getHours() < 10 ?
+          '0' + startDateObjCET.getHours() :
+          startDateObjCET.getHours();
+        const endHours = endDateObjCET.getHours() < 10 ?
+          '0' + endDateObjCET.getHours() :
+          endDateObjCET.getHours();
+        const startMinutes = startDateObjCET.getMinutes() < 10 ?
+          '0' + startDateObjCET.getMinutes() :
+          startDateObjCET.getMinutes();
+        const endMinutes = endDateObjCET.getMinutes() < 10 ?
+          '0' + endDateObjCET.getMinutes() :
+          endDateObjCET.getMinutes();
+
         return {
           ...reservation,
           startDateObj: startDateObjCET,
           endDateObj: endDateObjCET,
+          formattedStartTime: startHour+":"+startMinutes,
+          formattedEndTime: endHours+":"+endMinutes,
         };
       });
     }

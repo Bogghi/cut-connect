@@ -162,4 +162,64 @@ class ReservationController extends BaseController
             ->withStatus($result->statusCode)
             ->withHeader('Content-Type', 'application/json');
     }
+
+    public function bottomSheet(Request $request, Response $response, array $args): Response
+    {
+        $result = new Result();
+
+        if($this->validateToken($request)) {
+
+            $requestBody = $request->getParsedBody();
+
+            $reservation_id = $requestBody['reservation_id'] ?? null;
+            $user_id = $requestBody['user_id'] ?? null;
+            $reservation_date = $requestBody['reservation_date'] ?? null;
+            $start_time = $requestBody['start_time'] ?? null;
+            $end_time = $requestBody['end_time'] ?? null;
+            $client_name = $requestBody['client_name'] ?? null;
+            $phone_number = $requestBody['phone_number'] ?? null;
+            $description = $requestBody['description'] ?? null;
+
+            if ($reservation_id &&
+                $user_id &&
+                $reservation_date &&
+                $start_time &&
+                $end_time &&
+                $client_name) {
+
+                $updateResult = $this->dataAccess->update(
+                    table: 'reservations',
+                    args: ['reservation_id' => $reservation_id],
+                    requestData: [
+                        'reservation_date' => $reservation_date,
+                        'start_time' => $start_time,
+                        'end_time' => $end_time,
+                        'client_name' => $client_name,
+                        'phone_number' => $phone_number,
+                        'description' => $description
+                    ]
+                );
+
+                if($updateResult) {
+                    $result->setSuccessResult();
+                }
+                else {
+                    $result->setGenericError();
+                }
+
+            }
+            else {
+                $result->setInvalidParameters();
+            }
+
+        }
+        else {
+            $result->setUnauthorized();
+        }
+
+        $response->getBody()->write(json_encode($result->data));
+        return $response
+            ->withStatus($result->statusCode)
+            ->withHeader('Content-Type', 'application/json');
+    }
 }

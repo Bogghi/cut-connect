@@ -25,7 +25,5 @@ export function convertUtcToCet(utcDate) {
   const cetTime = utcTime + cestOffsetMilliseconds;
 
   // Create a new Date object with the CET time (which will be interpreted in the local time zone of the user's system)
-  const cetDate = new Date(cetTime);
-
-  return cetDate;
+  return new Date(cetTime);
 }

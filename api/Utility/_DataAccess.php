@@ -302,4 +302,35 @@ class _DataAccess
             return $stmt;
         }
     }
+
+    public function update($table, $args, $requestData): bool {
+
+        $this->connectPdo();
+
+        if ($requestData == null) {
+            return false;
+        }
+
+        $params = [];
+        $sets = 'SET ';
+        foreach ($requestData as $key => $value) {
+            $sets = $sets . $key . ' = ?, ';
+            $params[] = $this->interpretField($value);
+        }
+        $sets = rtrim($sets, ", ");
+        $wherePart = $this->queryWherePart($args, $params);
+
+        $sql = "UPDATE " . $table . ' ' . $sets . $wherePart;
+        $stmt = $this->pdo->prepare($sql);
+        $exec = $stmt->execute($params);
+
+        if($this->debug) {
+            ob_start();
+            $stmt->debugDumpParams();
+            error_log("DataAccess update debug: ".ob_get_clean());
+            $this->debug = false;
+        }
+
+        return $exec;
+    }
 }
