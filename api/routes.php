@@ -3,6 +3,7 @@
 use App\Controllers\AuthController;
 use App\Controllers\ReservationController;
 use App\Controllers\UserController;
+use App\Controllers\ServicesController;
 use Slim\Routing\RouteCollectorProxy;
 
 if(!isset($app)) {
@@ -28,3 +29,5 @@ $app->group(BASE_ROUTE.'/users', function(RouteCollectorProxy $group) {
     $group->get('/get', UserController::class . ':get');
 
 });
+
+$app->get(BASE_ROUTE.'/services/get', ServicesController::class . ':getServices');

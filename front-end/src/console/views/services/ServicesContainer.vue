@@ -1,6 +1,27 @@
 <script>
+import { useServicesStore } from "@/console/stores/index.js";
+
 export default {
-  name: 'ServicesContainer'
+  name: 'ServicesContainer',
+  setup() {
+    const servicesStore = useServicesStore();
+
+    return {
+      servicesStore
+    };
+  },
+  methods: {
+    addService() {
+
+    }
+  },
+  mounted() {
+    this.servicesStore.getServices(res => {
+      if(!res) {
+        alert("Errore durante il caricamento dei servizi");
+      }
+    });
+  }
 }
 </script>
 
@@ -9,6 +30,12 @@ export default {
     <div class="banner">
       <h1>I Nostri servizi</h1>
       <p>Scopri la nostra gamma di servizi di barbiere professionale pensati per aiutarti ad apparire e sentirti al meglio.</p>
+    </div>
+
+    <div class="services">
+      <div class="service add clickable" title="aggiungi servizio" @click="addService">
+        <i class="fa-solid fa-plus"></i>
+      </div>
     </div>
   </div>
 </template>

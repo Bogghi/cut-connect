@@ -180,4 +180,12 @@ export default class API {
     });
 
   }
+
+  getServices({callback}) {
+    this.get({
+      url: this.baseUrl + "/services/get",
+      callback: callback
+    });
+  }
+
 }
