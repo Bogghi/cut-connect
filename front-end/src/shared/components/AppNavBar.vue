@@ -42,7 +42,7 @@
         </svg>
         <span class="nav-link-label">Console</span>
       </div>
-      <div class="nav-link" v-if="currentRoute === 'home'">
+      <div class="nav-link" @click="navigateTo('services')">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -87,6 +87,10 @@ export default {
         case 'home':
           this.currentRoute = 'home';
           eventBus.emit('navigation', 'home');
+          break;
+        case 'services':
+          this.currentRoute = 'services';
+          eventBus.emit('navigation', 'services');
           break;
         default:
           console.warn('No app found');

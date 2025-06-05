@@ -11,29 +11,59 @@ import eventBus from '@/shared/utils/eventBus.js';
 import router from "@/console/router/index.js";
 
 const app = createApp(AppNavBar);
+const pinia = createPinia();
+const initConsole = () => {
+  let consoleApp = createApp(App);
+  consoleApp
+    .use(pinia)
+    .use(router);
+  return consoleApp;
+};
+let consoleApp = null;
+let consoleMounted = false;
+
 app.mount("#nav");
 
 eventBus.on('navigation', destination => {
+
   switch(destination) {
     case 'console':
-      document.querySelectorAll('#landing,#footer')
-        .forEach(node => node.classList.add('hidden'));
 
-      const consoleApp = createApp(App);
-      const pinia = createPinia();
-      consoleApp
-        .use(pinia)
-        .use(router)
-        .mount("#app");
+      if(!consoleApp) {
+        document.querySelectorAll('#landing,#footer')
+          .forEach(node => node.classList.add('hidden'));
+        consoleApp = initConsole();
+        consoleApp.mount("#app");
+      }
+      else {
+        router.push('/console/home');
+      }
+
       break;
     case 'home':
-      const appElement = document.querySelector('#app');
-      if(!!appElement.__vue_app__) {
-        appElement.__vue_app__.unmount();
-        router.push('/');
-        document.querySelectorAll('#landing,#footer')
-          .forEach(node => node.classList.remove('hidden'));
+
+      if(consoleApp) {
+        consoleApp.unmount();
+        consoleApp = null;
       }
+
+      router.push('/');
+      document.querySelectorAll('#landing,#footer')
+        .forEach(node => node.classList.remove('hidden'));
+
+      break;
+    case 'services':
+
+      if(!consoleApp) {
+        document.querySelectorAll('#landing,#footer')
+          .forEach(node => node.classList.add('hidden'));
+        consoleApp = initConsole();
+        consoleApp.mount("#app");
+      }
+
+      router.push('/console/services');
+
       break;
   }
+
 })
