@@ -174,3 +174,29 @@ input {
 .clickable {
     cursor: pointer;
 }
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    select {
+        border: 1px solid #d1d5db; /* Gray border */
+        font-size: 14px;
+        border-radius: 5px; /* Rounded corners for inputs */
+        padding: 10px; /* Padding inside inputs */
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    textarea {
+        border: 1px solid #d1d5db; /* Gray border */
+        font-size: 14px;
+        border-radius: 5px; /* Rounded corners for inputs */
+        padding: 10px;
+    }
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}

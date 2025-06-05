@@ -188,4 +188,12 @@ export default class API {
     });
   }
 
+  addService({service, callback}) {
+    this.post({
+      url: this.baseUrl + "/service/add",
+      data: service,
+      callback: callback
+    });
+  }
+
 }

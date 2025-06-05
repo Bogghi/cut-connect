@@ -7,6 +7,21 @@ export const useUsersStore = defineStore('user', {
       users: null,
     };
   },
+  getters: {
+    isLoggedIn: (state) => {
+      return !!localStorage.getItem('jwt_token');
+    },
+    getLoggedUser: (state) => {
+
+      if(this.isLoggedIn) {
+        return this.users.find(user => user.id === parseInt(localStorage.getItem('logged_user_id')));
+      }
+      else {
+        return null;
+      }
+
+    },
+  },
   actions: {
     login(username, password, callback) {
       API.init().login({

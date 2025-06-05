@@ -69,7 +69,15 @@ export default {
             reservation_id: reservationId,
             title: title
           });
-          this.$refs['bottomSheet'].open(this.reservationStore.getCurrentReservation);
+
+          this.refresh(null, res => {
+            if(!res) {
+              alert('Errore nel caricamento delle prenotazioni');
+            }
+            else {
+              this.$refs['bottomSheet'].open(this.reservationStore.getCurrentReservation);
+            }
+          })
         }
         else {
           alert('Errore durante la creazione della prenotazione');
@@ -236,26 +244,6 @@ export default {
   .reservation-details {
     display: flex;
     flex-direction: column;
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-
-      select {
-        border: 1px solid #d1d5db; /* Gray border */
-        font-size: 14px;
-        border-radius: 5px; /* Rounded corners for inputs */
-        padding: 10px; /* Padding inside inputs */
-        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-      }
-
-      textarea {
-        border: 1px solid #d1d5db; /* Gray border */
-        font-size: 14px;
-        border-radius: 5px; /* Rounded corners for inputs */
-        padding: 10px;
-      }
-    }
   }
 
   .reservation-actions {

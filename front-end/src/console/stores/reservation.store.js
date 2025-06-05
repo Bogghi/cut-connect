@@ -105,7 +105,7 @@ export const useReservationStore = defineStore("reservation", {
   },
   getters: {
     getCurrentReservation(state) {
-      return state.reservations.find(reservation => reservation.reservation_id === state.currentReservationId);
+      return state.reservations.find(reservation => reservation.reservation_id === parseInt(state.currentReservationId));
     }
   }
 });

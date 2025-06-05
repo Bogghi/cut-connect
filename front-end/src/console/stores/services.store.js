@@ -26,8 +26,7 @@ export const useServicesStore = defineStore("services", {
         service,
         callback: res => {
           if (res.status === "OK") {
-            this.services.push(res.service);
-            callback && callback(true, res.service);
+            callback && callback(true);
           } else {
             callback && callback(false);
           }
