@@ -29,6 +29,7 @@ export default {
         timeCellHeight: 80,
         editableEvents: {drag: true, resize: true, delete: false, create: true}
       },
+      windowType: 'day',
       windowStart: getUTCDateString(new Date()),
       windowEnd: null,
     };
@@ -116,6 +117,7 @@ export default {
     refresh(end = null, callback = null) {
       let params = {
         start: this.windowStart,
+        windowType: this.windowType,
         callback: !callback ? res => {
           if(!res) {
             alert('Error nel caricamento delle prenotazioni');
@@ -130,6 +132,18 @@ export default {
         params['end'] = this.windowEnd;
       }
       this.reservationStore.getReservations(params);
+    },
+    viewChange(view) {
+
+      this.windowStart = getUTCDateString(view.start);
+      this.windowType = view.id;
+      let end = getUTCDateString(view.end);
+      this.refresh(end, res => {
+        if(!res) {
+          alert('Errore nel caricamento delle prenotazioni');
+        }
+      });
+
     }
   },
   mounted() {
@@ -150,7 +164,8 @@ export default {
              :events="reservations"
              style="--vuecal-height: 100%; --vuecal-primary-color: var(--main-color);--vuecal-border-radius: 0;"
              @event-dblclick="e => doubleClick(e.event)"
-             @event-create="createEvent" />
+             @event-create="createEvent"
+             @view-change="viewChange"/>
     <BottomSheet ref="bottomSheet">
       <div class="reservation-info-container">
         <h3>Prenotazione</h3>

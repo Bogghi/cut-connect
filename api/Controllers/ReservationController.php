@@ -137,7 +137,7 @@ class ReservationController extends BaseController
                                 table: 'reservations',
                                 args: [
                                     'reservation_date' => ">$start",
-                                    'end_date' => "<$end",
+                                    'reservation_date' => "<$end",
                                 ],
                                 fields: ['reservations.*', 'users.user_name'],
                                 join: ['users' => 'user_id'],

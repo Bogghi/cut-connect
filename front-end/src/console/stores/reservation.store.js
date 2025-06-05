@@ -6,7 +6,6 @@ export const useReservationStore = defineStore("reservation", {
   state: () => {
     return {
       reservations: [],
-      windowType: "day",
       currentReservationId: null,
       viewWindow: {
         start: null,
@@ -57,10 +56,9 @@ export const useReservationStore = defineStore("reservation", {
       });
 
     },
-    getReservations({ start, end = null, callback }) {
-      let self = this;
+    getReservations({ start, end = null, windowType = 'day', callback }) {
       API.init().getReservations({
-        window_type: self.windowType,
+        window_type: windowType,
         start,
         end,
         callback: res => {
