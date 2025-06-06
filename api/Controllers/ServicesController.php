@@ -23,7 +23,10 @@ class ServicesController extends BaseController
 
         if($this->validateToken($request)) {
 
-            $services = $this->dataAccess->get(table: 'services');
+            $services = $this->dataAccess->get(
+                table: 'services',
+                args: ['deleted' => 0],
+            );
 
             $result->setSuccessResult(['services' => $services]);
 
@@ -70,6 +73,37 @@ class ServicesController extends BaseController
                 else {
                     $result->setGenericError();
                 }
+            }
+            else {
+                $result->setInvalidParameters();
+            }
+
+        }
+        else {
+            $result->setUnauthorized();
+        }
+
+        $response->getBody()->write(json_encode($result->data));
+        return $response
+            ->withStatus($result->statusCode)
+            ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function deleteService(Request $request, Response $response, array $args): Response
+    {
+        $result = new Result();
+
+        if($this->validateToken($request)) {
+
+            $requestBody = $request->getParsedBody();
+
+            $service_id = $requestBody['service_id'] ?? null;
+
+            if($service_id) {
+                $this->dataAccess->delete(
+                    table: 'services',
+                    args: ['service_id' => $service_id],
+                );
             }
             else {
                 $result->setInvalidParameters();

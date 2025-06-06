@@ -29,8 +29,9 @@ create table services (
     service_id int primary key auto_increment,
     service_name varchar(255) not null,
     description text,
-    price int not null,
+    price int not null, -- price in cents
     duration int not null, -- duration in minutes
+    deleted tinyint not null default 0, -- 0 = not deleted, 1 = deleted
     created_at timestamp default current_timestamp
 );
 

@@ -245,7 +245,8 @@ class _DataAccess
         return $this->pdo->lastInsertId();
     }
 
-    public function delete($table, $args) {
+    public function delete($table, $args): bool
+    {
 
         $this->connectPdo();
 
