@@ -70,6 +70,22 @@ export default {
     </div>
 
     <div class="services">
+      <div class="service" v-for="service in servicesStore.services" :key="service.service_id">
+        <h3>{{ service.service_name }}</h3>
+        <p class="txt-2">{{ service.description }}</p>
+        <div class="service-time">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+               stroke-linejoin="round" class="lucide lucide-clock h-3 w-3 mr-1">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span class="txt-2">{{ service.duration }} minuti</span>
+        </div>
+        <h3 class="txt-secondary">{{ service.readablePrice }}€</h3>
+
+        <button class="btn btn-secondary">Prenota</button>
+      </div>
       <div class="service add clickable" title="aggiungi servizio" @click="openAddServiceForm"
            v-if="usersStore.isLoggedIn">
         <i class="fa-solid fa-plus"></i>

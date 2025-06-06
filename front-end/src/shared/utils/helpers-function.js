@@ -12,5 +12,5 @@ export function getUTCTimeString(dateObj) {
 }
 
 export function readablePrice(price) {
-  return String(price/100) + String(price % 100).padStart(2, '0');
+  return String(parseInt(price/100)) + ',' + String(price % 100).padStart(2, '0');
 }

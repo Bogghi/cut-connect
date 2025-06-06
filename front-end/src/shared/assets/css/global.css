@@ -155,6 +155,10 @@ input {
         h3 {
             margin-bottom: 0;
         }
+        p {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
 
         .service-time {
             display: flex;
