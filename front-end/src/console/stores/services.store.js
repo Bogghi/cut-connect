@@ -4,9 +4,17 @@ import { readablePrice } from "@/shared/utils/helpers-function.js";
 
 export const useServicesStore = defineStore("services", {
   state: () => {
-    services: null
+    return {
+      services: null,
+      currentServiceId: null,
+    }
   },
-  getters: {},
+  getters: {
+    getServiceById: (state) => {
+      return state.services && state.currentServiceId ?
+        state.services.find(service => service.service_id === state.currentServiceId) : null;
+    },
+  },
   actions: {
     getServices(callback) {
       API.init().getServices({

@@ -136,7 +136,7 @@ export default {
         this.windowEnd = end;
         params['end'] = this.windowEnd;
       }
-      else if(this.reservationStore.windowType === 'week' && this.windowEnd !== null) {
+      else if(this.windowType === 'week' && this.windowEnd !== null) {
         params['end'] = this.windowEnd;
       }
       this.reservationStore.getReservations(params);

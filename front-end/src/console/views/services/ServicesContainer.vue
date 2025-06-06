@@ -13,14 +13,53 @@ export default {
       usersStore
     };
   },
+  data() {
+    return {
+      editing: false,
+    };
+  },
   components: {
     BottomSheet
   },
+  computed: {
+    serviceFormSuccessBtnTitle() {
+      return this.editing ? 'Modifica' : 'Aggiungi';
+    },
+    serviceFormDangerBtnTitle() {
+      return this.editing ? 'Cancella' : 'Annulla';
+    },
+  },
   methods: {
     openAddServiceForm() {
-      this.$refs['add-service-form'].open();
+      this.$refs['service-form'].open();
     },
-    addService() {
+    addService(serviceData) {
+      this.servicesStore.addService(
+        serviceData,
+        res => {
+          if(res) {
+            this.$refs['service-form'].close();
+            this.refresh();
+          }
+          else {
+            alert("Errore durante l'aggiunta del servizio");
+          }
+        }
+      );
+    },
+    editServiceForm(serviceId) {
+      this.servicesStore.currentServiceId = serviceId;
+      this.editing = true;
+      this.$refs['service-form'].open();
+    },
+    refresh() {
+      this.servicesStore.getServices(res => {
+        if(!res) {
+          alert("Errore durante il caricamento dei servizi");
+        }
+      });
+    },
+    confirmAction() {
       const serviceData = {}
       let formNodes = document.querySelectorAll('.form-group input');
       for(let i = 0; i < formNodes.length; i++) {
@@ -35,26 +74,35 @@ export default {
 
       }
 
-      this.servicesStore.addService(
-        serviceData,
-        res => {
-          if(res) {
-            this.$refs['add-service-form'].close();
-            this.refresh();
-          }
-          else {
-            alert("Errore durante l'aggiunta del servizio");
-          }
-        }
-      );
+      if(this.editing) {
+        // update action
+      }
+      else {
+        this.addService(serviceData);
+      }
     },
-    refresh() {
-      this.servicesStore.getServices(res => {
-        if(!res) {
-          alert("Errore durante il caricamento dei servizi");
+    abortAction() {
+      const serviceData = {}
+      let formNodes = document.querySelectorAll('.form-group input');
+      for(let i = 0; i < formNodes.length; i++) {
+        let key = formNodes[i].id;
+
+        if(key === 'price') {
+          serviceData[key] = parseFloat(formNodes[i].value)*100;
         }
-      });
-    }
+        else {
+          serviceData[key] = formNodes[i].value;
+        }
+
+      }
+
+      if(this.editing) {
+        // delete action
+      }
+      else {
+        this.$refs['service-form'].close();
+      }
+    },
   },
   mounted() {
     this.refresh();
@@ -69,7 +117,7 @@ export default {
       <p>Scopri la nostra gamma di servizi di barbiere professionale pensati per aiutakrti ad apparire e sentirti al meglio.</p>
     </div>
 
-    <div class="services">
+    <div class="services services-wrapper">
       <div class="service" v-for="service in servicesStore.services" :key="service.service_id">
         <h3>{{ service.service_name }}</h3>
         <p class="txt-2">{{ service.description }}</p>
@@ -85,6 +133,9 @@ export default {
         <h3 class="txt-secondary">{{ service.readablePrice }}€</h3>
 
         <button class="btn btn-secondary">Prenota</button>
+        <button class="btn" @click="editServiceForm(service.service_id)">
+          <i class="fa-solid fa-pen"></i>
+        </button>
       </div>
       <div class="service add clickable" title="aggiungi servizio" @click="openAddServiceForm"
            v-if="usersStore.isLoggedIn">
@@ -92,7 +143,7 @@ export default {
       </div>
     </div>
 
-    <BottomSheet ref="add-service-form">
+    <BottomSheet ref="service-form" @closed="editing = false">
       <h2>Dettagli nuovo servizio</h2>
       <div class="service-definition-form">
         <div class="form-group">
@@ -113,18 +164,24 @@ export default {
         </div>
       </div>
       <div class="flex-row">
-        <button class="btn btn-success" @click="addService">Salva</button>
-        <button class="btn btn-danger" @click="$refs['add-service-form'].close()">Annulla</button>
+        <button class="btn btn-success" @click="confirmAction">{{ serviceFormSuccessBtnTitle }}</button>
+        <button class="btn btn-danger" @click="abortAction">{{ serviceFormDangerBtnTitle }}</button>
       </div>
     </BottomSheet>
   </div>
 </template>
 
 <style scoped>
+
 .services-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .services-wrapper {
+    width: 1200px;
+    margin-bottom: 50px;
+  }
 
   .banner {
     display: flex;

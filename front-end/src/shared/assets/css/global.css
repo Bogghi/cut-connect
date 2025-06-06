@@ -129,10 +129,11 @@ input {
 
 .services {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     gap: 50px;
     margin-top: 80px;
+    flex-wrap: wrap;
 
     @media (max-width: 1380px) {
         flex-direction: column;

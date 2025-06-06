@@ -55,7 +55,7 @@ eventBus.on('navigation', destination => {
     case 'services':
 
       if(!consoleApp) {
-        document.querySelectorAll('#landing,#footer')
+        document.querySelectorAll('#landing')
           .forEach(node => node.classList.add('hidden'));
         consoleApp = initConsole();
         consoleApp.mount("#app");
