@@ -36,7 +36,7 @@ eventBus.on('navigation', destination => {
         consoleApp.mount("#app");
       }
       else {
-        router.push('/console/home');
+        router.push('/');
       }
 
       break;
@@ -47,7 +47,6 @@ eventBus.on('navigation', destination => {
         consoleApp = null;
       }
 
-      router.push('/');
       document.querySelectorAll('#landing,#footer')
         .forEach(node => node.classList.remove('hidden'));
 
@@ -63,7 +62,6 @@ eventBus.on('navigation', destination => {
 
       router.push('/console/services');
 
-      break;
   }
 
 })
