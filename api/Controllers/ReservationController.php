@@ -184,8 +184,7 @@ class ReservationController extends BaseController
                 $user_id &&
                 $reservation_date &&
                 $start_time &&
-                $end_time &&
-                $client_name) {
+                $end_time) {
 
                 $updateResult = $this->dataAccess->update(
                     table: 'reservations',
