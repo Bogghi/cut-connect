@@ -196,4 +196,14 @@ export default class API {
     });
   }
 
+  deleteService({serviceId, callback}) {
+    this.post({
+      url: this.baseUrl + "/service/delete",
+      data: {
+        service_id: serviceId,
+      },
+      callback: callback
+    });
+  }
+
 }
