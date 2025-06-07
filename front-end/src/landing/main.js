@@ -23,6 +23,8 @@ let consoleApp = null;
 let consoleMounted = false;
 
 app.mount("#nav");
+window.history.replaceState({}, '', '/');
+router.push('/');
 
 eventBus.on('navigation', destination => {
 
@@ -42,6 +44,7 @@ eventBus.on('navigation', destination => {
       break;
     case 'home':
 
+      router.push('/');
       if(consoleApp) {
         consoleApp.unmount();
         consoleApp = null;
