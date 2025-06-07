@@ -2,7 +2,6 @@ import AppNavBar from '@/shared/components/AppNavBar.vue'
 import '@/shared/assets/css/global.css';
 import '@/shared/assets/css/landing.css'
 import '@/shared/assets/css/footer.css'
-import '@/../node_modules/vue-multiselect/dist/vue-multiselect.min.css'
 
 import App from '@/console/App.vue';
 
