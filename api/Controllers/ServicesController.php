@@ -54,21 +54,23 @@ class ServicesController extends BaseController
             $price = $requestBody['price'] ?? null;
             $duration = $requestBody['duration'] ?? null;
 
-            if($service_name && $description && $price && $duration) {
+            if($service_name && $price && $duration) {
                 $service = [
                     'service_name' => $service_name,
-                    'description' => $description,
                     'price' => $price,
                     'duration' => $duration
                 ];
+                if($description) {
+                    $service['description'] = $description;
+                }
 
-                $inserId = $this->dataAccess->add(
+                $insertId = $this->dataAccess->add(
                     table: 'services',
                     requestData: $service,
                 );
 
-                if($inserId) {
-                    $result->setSuccessResult(['service_id' => $inserId]);
+                if($insertId) {
+                    $result->setSuccessResult(['service_id' => $insertId]);
                 }
                 else {
                     $result->setGenericError();
@@ -100,15 +102,73 @@ class ServicesController extends BaseController
             $service_id = $requestBody['service_id'] ?? null;
 
             if($service_id) {
-                $this->dataAccess->delete(
+                $updateResult = $this->dataAccess->update(
                     table: 'services',
                     args: ['service_id' => $service_id],
+                    requestData: [
+                        'deleted' => 1
+                    ],
                 );
                 $result->setSuccessResult();
             }
             else {
                 $result->setInvalidParameters();
             }
+
+        }
+        else {
+            $result->setUnauthorized();
+        }
+
+        $response->getBody()->write(json_encode($result->data));
+        return $response
+            ->withStatus($result->statusCode)
+            ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function updateService(Request $request, Response $response, array $args): Response
+    {
+        $result = new Result();
+
+        if($this->validateToken($request)) {
+
+            $requestBody = $request->getParsedBody();
+
+            $service_id = $requestBody['service_id'] ?? null;
+            $service_name = $requestBody['service_name'] ?? null;
+            $description = $requestBody['description'] ?? null;
+            $price = $requestBody['price'] ?? null;
+            $duration = $requestBody['duration'] ?? null;
+
+            if($service_id && $service_name && $price && $duration) {
+
+                $service = [
+                    'service_name' => $service_name,
+                    'price' => $price,
+                    'duration' => $duration
+                ];
+                if($description) {
+                    $service['description'] = $description;
+                }
+
+                $updateResult = $this->dataAccess->update(
+                    table: 'services',
+                    args: ['service_id' => $service_id],
+                    requestData: $service,
+                );
+
+                if($updateResult) {
+                    $result->setSuccessResult();
+                }
+                else {
+                    $result->setGenericError();
+                }
+
+            }
+            else {
+                $result->setInvalidParameters();
+            }
+
 
         }
         else {

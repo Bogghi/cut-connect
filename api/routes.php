@@ -35,5 +35,6 @@ $app->group(BASE_ROUTE.'/service', function(RouteCollectorProxy $group) {
 
     $group->post('/add', ServicesController::class . ':addService');
     $group->post('/delete', ServicesController::class . ':deleteService');
+    $group->post('/update', ServicesController::class . ':updateService');
 
 });

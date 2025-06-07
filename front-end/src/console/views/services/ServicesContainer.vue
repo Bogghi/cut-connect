@@ -28,6 +28,9 @@ export default {
     serviceFormDangerBtnTitle() {
       return this.editing ? 'Cancella' : 'Annulla';
     },
+    bottomSheetTitle() {
+      return this.editing ? "Dettagli servizio" : "Dettagli nuovo servizio";
+    },
   },
   methods: {
     openAddServiceForm() {
@@ -43,6 +46,22 @@ export default {
           }
           else {
             alert("Errore durante l'aggiunta del servizio");
+          }
+        }
+      );
+    },
+    updateService(serviceData) {
+      this.servicesStore.updateService(
+        serviceData,
+        res => {
+          if(res) {
+            this.editing = false;
+            this.servicesStore.currentServiceId = null;
+            this.$refs['service-form'].close();
+            this.refresh();
+          }
+          else {
+            alert("Errore durante l'aggiornamento del servizio");
           }
         }
       );
@@ -75,7 +94,7 @@ export default {
       }
 
       if(this.editing) {
-        // update action
+        this.updateService(serviceData);
       }
       else {
         this.addService(serviceData);
@@ -145,23 +164,27 @@ export default {
     </div>
 
     <BottomSheet ref="service-form" @closed="editing = false">
-      <h2>Dettagli nuovo servizio</h2>
+      <h2>{{ bottomSheetTitle }}</h2>
       <div class="service-definition-form">
         <div class="form-group">
           <label for="service-name">Nome del servizio</label>
-          <input type="text" id="service_name" placeholder="Es. Taglio capelli">
+          <input type="text" id="service_name" placeholder="Es. Taglio capelli"
+                 :value="editing ? servicesStore.getServiceById.service_name : ''">
         </div>
         <div class="form-group">
           <label for="service-description">Descrizione</label>
-          <input type="text" id="description" placeholder="Es. Taglio capelli con shampoo e asciugatura">
+          <input type="text" id="description" placeholder="Es. Taglio capelli con shampoo e asciugatura"
+                 :value="editing ? servicesStore.getServiceById.description : ''">
         </div>
         <div class="form-group">
           <label for="service-price">Prezzo <small>(€)</small></label>
-          <input type="number" id="price" placeholder="Es. 20.00" step="0.01">
+          <input type="number" id="price" placeholder="Es. 20.00" step="0.01"
+                 :value="editing ? servicesStore.getServiceById.readablePrice : ''">
         </div>
         <div class="form-group">
           <label for="service-duration">Durata <small>(in minuti)</small></label>
-          <input type="number" id="duration" placeholder="Es. 30" step="1">
+          <input type="number" id="duration" placeholder="Es. 30" step="1"
+                 :value="editing ? servicesStore.getServiceById.duration : ''">
         </div>
       </div>
       <div class="flex-row">

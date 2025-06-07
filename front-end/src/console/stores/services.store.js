@@ -40,24 +40,22 @@ export const useServicesStore = defineStore("services", {
         }
       });
     },
-    // To review
     updateService(service, callback) {
+      let data = {
+        ...service,
+        service_id: this.currentServiceId
+      };
       API.init().updateService({
-        service,
+        service: data,
         callback: res => {
           if (res.status === "OK") {
-            const index = this.services.findIndex(s => s.id === service.id);
-            if (index !== -1) {
-              this.services[index] = res.service;
-            }
-            callback && callback(true, res.service);
+            callback && callback(true);
           } else {
             callback && callback(false);
           }
         }
       });
     },
-    // To Review
     deleteService(serviceId, callback) {
       API.init().deleteService({
         serviceId,

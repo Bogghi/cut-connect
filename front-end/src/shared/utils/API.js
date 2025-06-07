@@ -196,6 +196,14 @@ export default class API {
     });
   }
 
+  updateService({service, callback}) {
+    this.post({
+      url: this.baseUrl + "/service/update",
+      data: service,
+      callback: callback
+    });
+  }
+
   deleteService({serviceId, callback}) {
     this.post({
       url: this.baseUrl + "/service/delete",
