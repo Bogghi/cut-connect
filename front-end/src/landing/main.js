@@ -45,9 +45,9 @@ eventBus.on('navigation', destination => {
       if(consoleApp) {
         consoleApp.unmount();
         consoleApp = null;
+        window.history.replaceState({}, '', '/');
       }
 
-      router.push('/');
       document.querySelectorAll('#landing,#footer')
         .forEach(node => node.classList.remove('hidden'));
 
