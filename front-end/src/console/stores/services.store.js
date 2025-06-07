@@ -28,7 +28,6 @@ export const useServicesStore = defineStore("services", {
         }
       });
     },
-    // To review
     addService(service, callback) {
       API.init().addService({
         service,

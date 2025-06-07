@@ -130,7 +130,7 @@ input {
 .services {
     display: flex;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     gap: 50px;
     margin-top: 80px;
     flex-wrap: wrap;

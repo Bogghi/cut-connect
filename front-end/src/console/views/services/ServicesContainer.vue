@@ -82,22 +82,21 @@ export default {
       }
     },
     abortAction() {
-      const serviceData = {}
-      let formNodes = document.querySelectorAll('.form-group input');
-      for(let i = 0; i < formNodes.length; i++) {
-        let key = formNodes[i].id;
-
-        if(key === 'price') {
-          serviceData[key] = parseFloat(formNodes[i].value)*100;
-        }
-        else {
-          serviceData[key] = formNodes[i].value;
-        }
-
-      }
-
       if(this.editing) {
-        // delete action
+        this.servicesStore.deleteService(
+          this.servicesStore.currentServiceId,
+          res => {
+            if(res) {
+              this.editing = false;
+              this.servicesStore.currentServiceId = null;
+              this.$refs['service-form'].close();
+              this.refresh();
+            }
+            else {
+              alert("Errore durante la cancellazione del servizio");
+            }
+          }
+        );
       }
       else {
         this.$refs['service-form'].close();
@@ -117,29 +116,31 @@ export default {
       <p>Scopri la nostra gamma di servizi di barbiere professionale pensati per aiutakrti ad apparire e sentirti al meglio.</p>
     </div>
 
-    <div class="services services-wrapper">
-      <div class="service" v-for="service in servicesStore.services" :key="service.service_id">
-        <h3>{{ service.service_name }}</h3>
-        <p class="txt-2">{{ service.description }}</p>
-        <div class="service-time">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-               stroke-linejoin="round" class="lucide lucide-clock h-3 w-3 mr-1">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <span class="txt-2">{{ service.duration }} minuti</span>
-        </div>
-        <h3 class="txt-secondary">{{ service.readablePrice }}€</h3>
+    <div class="services-wrapper">
+      <div class="services">
+        <div class="service" v-for="service in servicesStore.services" :key="service.service_id">
+          <h3>{{ service.service_name }}</h3>
+          <p class="txt-2">{{ service.description }}</p>
+          <div class="service-time">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round" class="lucide lucide-clock h-3 w-3 mr-1">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span class="txt-2">{{ service.duration }} minuti</span>
+          </div>
+          <h3 class="txt-secondary">{{ service.readablePrice }}€</h3>
 
-        <button class="btn btn-secondary">Prenota</button>
-        <button class="btn" @click="editServiceForm(service.service_id)">
-          <i class="fa-solid fa-pen"></i>
-        </button>
-      </div>
-      <div class="service add clickable" title="aggiungi servizio" @click="openAddServiceForm"
-           v-if="usersStore.isLoggedIn">
-        <i class="fa-solid fa-plus"></i>
+          <button class="btn btn-secondary">Prenota</button>
+          <button class="btn" @click="editServiceForm(service.service_id)">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+        </div>
+        <div class="service add clickable" title="aggiungi servizio" @click="openAddServiceForm"
+             v-if="usersStore.isLoggedIn">
+          <i class="fa-solid fa-plus"></i>
+        </div>
       </div>
     </div>
 
@@ -178,9 +179,12 @@ export default {
   flex-direction: column;
   align-items: center;
 
+
   .services-wrapper {
+    display: flex;
     width: 1200px;
-    margin-bottom: 50px;
+    margin-bottom: 80px;
+    min-height: calc(100vh - 492px);
   }
 
   .banner {

@@ -104,6 +104,7 @@ class ServicesController extends BaseController
                     table: 'services',
                     args: ['service_id' => $service_id],
                 );
+                $result->setSuccessResult();
             }
             else {
                 $result->setInvalidParameters();
