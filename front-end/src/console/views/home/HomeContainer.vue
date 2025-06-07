@@ -3,14 +3,15 @@ import { VueCal } from 'vue-cal'
 import 'vue-cal/style'
 import BottomSheet from '@douxcode/vue-spring-bottom-sheet'
 import '@douxcode/vue-spring-bottom-sheet/dist/style.css'
-import { useReservationStore, useUsersStore } from "@/console/stores/index.js";
+import { useReservationStore, useUsersStore, useServicesStore } from "@/console/stores/index.js";
 import { getUTCTimeString, getUTCDateString } from "@/shared/utils/helpers-function.js";
 
 export default {
   setup() {
     const reservationStore = useReservationStore();
     const userStore = useUsersStore();
-    return { reservationStore, userStore }
+    const servicesStore = useServicesStore();
+    return { reservationStore, userStore, servicesStore }
   },
   name: 'HomeContainer',
   components: {
@@ -32,6 +33,7 @@ export default {
       windowType: 'day',
       windowStart: getUTCDateString(new Date()),
       windowEnd: null,
+      reservationItems: null
     };
   },
   computed: {
@@ -46,11 +48,25 @@ export default {
         };
       });
     },
+    services() {
+      return this.servicesStore.services ?
+        this.servicesStore.services.map(service => {
+          return {
+            name: service.service_name + ' (' + service.readablePrice + '€)',
+            service_id: service.service_id,
+          }
+        }) :
+        [];
+    },
+    getReservationUserId() {
+      return this.reservationStore.getCurrentReservation ? this.reservationStore.getCurrentReservation.user_id : 0;
+    }
+
   },
   methods: {
     doubleClick(event) {
       this.reservationStore.currentReservationId = event.reservation_id;
-      this.$refs['bottomSheet'].open();
+      this.openReservationBottomSheet();
     },
     createEvent({ event, resolve }) {
       const title = 'Nuovo appuntamento';
@@ -75,7 +91,7 @@ export default {
               alert('Errore nel caricamento delle prenotazioni');
             }
             else {
-              this.$refs['bottomSheet'].open(this.reservationStore.getCurrentReservation);
+              this.openReservationBottomSheet();
             }
           })
         }
@@ -92,11 +108,15 @@ export default {
         reservationData[formNodes[i].id] = formNodes[i].value;
       }
 
+      if(this.reservationItems) {
+        reservationData['reservation_items'] = this.reservationItems.map(item => item.id);
+      }
+
       this.reservationStore.updateReservation(
         reservationData,
         res => {
           if(res) {
-            this.$refs['bottomSheet'].close();
+            this.closeReservationBottomSheet();
             this.refresh();
           }
           else {
@@ -110,7 +130,7 @@ export default {
         if(res.status === 'OK') {
           this.refresh(null, res => {
             if(res) {
-              this.$refs['bottomSheet'].close();
+              this.closeReservationBottomSheet();
             }
             else {
               alert('Errore nella cancellazione della prenotazione');
@@ -152,6 +172,25 @@ export default {
         }
       });
 
+    },
+    openReservationBottomSheet() {
+      this.$refs['bottomSheet'].open();
+      this.servicesStore.getServices(res => {
+        if(!res) {
+          console.error('Errore nel caricamento dei servizi');
+        }
+        else {
+          setTimeout(() => {
+            new MultiSelectTag('reservation_items', {
+              onChange: res => this.reservationItems = res
+            });
+          }, 200);
+        }
+      });
+    },
+    closeReservationBottomSheet() {
+      this.$refs['bottomSheet'].close();
+      this.reservationItems = null;
     }
   },
   mounted() {
@@ -182,8 +221,30 @@ export default {
             <label for="user_id">Barbiere</label>
             <select id="user_id" name="barbiere">
               <option v-for="user in userStore.users" :value="user.user_id"
-                :selected="user.user_id === reservationStore.getCurrentReservation.user_id">
+                :selected="user.user_id === getReservationUserId">
                 {{user.username}}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="client_name">Nome del Cliente</label>
+            <input type="text" id="client_name" name="client_name" placeholder="Es. Mario Rossi" required
+                   :value="reservationStore.getCurrentReservation.client_name">
+          </div>
+
+          <div class="form-group">
+            <label for="phone_number">Numero di Telefono</label>
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Es. 3331234567" pattern="[0-9]{8,10}"
+                   title="Inserisci un numero di telefono valido (8-10 cifre)"
+                   :value="reservationStore.getCurrentReservation.phone_number">
+          </div>
+
+          <div>
+            <label for="reservation_items">Servizi scelti</label>
+            <select id="reservation_items" multiple>
+              <option v-for="service in services" :value="service.service_id">
+                {{service.name}}
               </option>
             </select>
           </div>
@@ -204,19 +265,6 @@ export default {
             <label for="end_time">Ora Fine (stimata)</label>
             <input type="time" id="end_time" name="end_time" required
                    :value="reservationStore.getCurrentReservation.formattedEndTime">
-          </div>
-
-          <div class="form-group">
-            <label for="client_name">Nome del Cliente</label>
-            <input type="text" id="client_name" name="client_name" placeholder="Es. Mario Rossi" required
-                   :value="reservationStore.getCurrentReservation.client_name">
-          </div>
-
-          <div class="form-group">
-            <label for="phone_number">Numero di Telefono</label>
-            <input type="tel" id="phone_number" name="phone_number" placeholder="Es. 3331234567" pattern="[0-9]{8,10}"
-                   title="Inserisci un numero di telefono valido (8-10 cifre)"
-                   :value="reservationStore.getCurrentReservation.phone_number">
           </div>
 
           <div class="form-group">

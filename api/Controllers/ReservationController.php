@@ -137,7 +137,7 @@ class ReservationController extends BaseController
                                 table: 'reservations',
                                 args: [
                                     'reservation_date' => ">$start",
-                                    'reservation_date' => "<$end",
+                                    'reservations.reservation_date' => "<$end",
                                 ],
                                 fields: ['reservations.*', 'users.user_name'],
                                 join: ['users' => 'user_id'],
@@ -163,7 +163,7 @@ class ReservationController extends BaseController
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function bottomSheet(Request $request, Response $response, array $args): Response
+    public function updateReservation(Request $request, Response $response, array $args): Response
     {
         $result = new Result();
 
@@ -179,6 +179,7 @@ class ReservationController extends BaseController
             $client_name = $requestBody['client_name'] ?? null;
             $phone_number = $requestBody['phone_number'] ?? null;
             $description = $requestBody['description'] ?? null;
+            $reservation_items = $requestBody['reservation_items'] ?? null;
 
             if ($reservation_id &&
                 $user_id &&
@@ -198,6 +199,20 @@ class ReservationController extends BaseController
                         'description' => $description
                     ]
                 );
+
+                if($reservation_items){
+                    $this->dataAccess->delete(
+                        table: 'reservations_items',
+                        args: ['reservation_id' => $reservation_id],
+                    );
+                    $this->dataAccess->add(
+                        table: 'reservations_items',
+                        requestData: array_map(
+                            fn($item) => ['service_id' => $item, 'reservation_id' => $reservation_id, 'quantity' => 1],
+                            $reservation_items
+                        ),
+                    );
+                }
 
                 if($updateResult) {
                     $result->setSuccessResult();

@@ -20,7 +20,7 @@ $app->group(BASE_ROUTE.'/reservation', function(RouteCollectorProxy $group) {
 
     $group->post('/add', ReservationController::class . ':addReservation');
     $group->post('/delete', ReservationController::class . ':deleteReservation');
-    $group->post('/update', ReservationController::class . ':bottomSheet');
+    $group->post('/update', ReservationController::class . ':updateReservation');
 
 });
 
