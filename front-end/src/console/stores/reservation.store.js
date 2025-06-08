@@ -107,15 +107,17 @@ export const useReservationStore = defineStore("reservation", {
         };
       });
 
-      reservationsItems.forEach((item) => {
-        normReservations[item.reservation_id].items.push({
-          ...item,
-          readablePrice: readablePrice(item.price),
+      if(reservationsItems) {
+        reservationsItems.forEach((item) => {
+          normReservations[item.reservation_id].items.push({
+            ...item,
+            readablePrice: readablePrice(item.price)
+          });
+          let add = normReservations[item.reservation_id].items.length > 1 ? "+" : "";
+          normReservations[item.reservation_id].total += item.price;
+          normReservations[item.reservation_id].servicesString += add + item.service_name;
         });
-        let add = normReservations[item.reservation_id].items.length > 1 ? '+' : '';
-        normReservations[item.reservation_id].total += item.price;
-        normReservations[item.reservation_id].servicesString += add + item.service_name;
-      })
+      }
 
       return Object.values(normReservations);
     }

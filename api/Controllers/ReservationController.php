@@ -70,12 +70,16 @@ class ReservationController extends BaseController
 
             if($reservationId) {
 
+                $deleteItemsResult = $this->dataAccess->delete(
+                    table: 'reservations_items',
+                    args: ['reservation_id' => $reservationId],
+                );
                 $deleteResult = $this->dataAccess->delete(
                     table: 'reservations',
                     args: ['reservation_id' => $reservationId],
                 );
 
-                if($deleteResult) {
+                if($deleteResult && $deleteItemsResult) {
                     $result->setSuccessResult();
                 }
                 else {

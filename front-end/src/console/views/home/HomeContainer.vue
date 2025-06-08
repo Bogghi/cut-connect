@@ -44,6 +44,10 @@ export default {
   computed: {
     reservations() {
       return this.reservationStore.reservations.map(reservation => {
+        const color = reservation.status === 'pending' ? 'rgb(205, 69, 0)' :
+          reservation.status === 'confirmed' ? 'var(--main-color)' :
+          reservation.status === 'cancelled' ? 'rgb(67, 67, 67)' :
+          reservation.status === 'completed' ? 'rgb(39, 42, 0)' : '';
         return {
           reservation_id: reservation.reservation_id,
           start: reservation.startDateObj,
@@ -52,6 +56,7 @@ export default {
           content: reservation.description + "<br>" +
             reservation.servicesString + "<br>" +
             readablePrice(reservation.total) + "€<br>",
+          backgroundColor: color,
         };
       });
     },
@@ -109,14 +114,16 @@ export default {
     },
     saveChanges() {
       const reservationData = {}
-      let formNodes = document.querySelectorAll('.form-group input,select,textarea');
+      let formNodes = document.querySelectorAll('.form-group>input,.form-group>select,.form-group>textarea');
 
       for(let i = 0; i < formNodes.length; i++) {
         reservationData[formNodes[i].id] = formNodes[i].value;
       }
 
       if(this.reservationItems) {
-        reservationData['reservation_items'] = this.reservationItems.map(item => item.id);
+        reservationData['reservation_items'] = this.reservationItems.length > 1 ?
+          this.reservationItems.map(item => item.id) :
+          [this.reservationItems[0].id];
       }
 
       this.reservationStore.updateReservation(
@@ -236,6 +243,20 @@ export default {
                 :selected="user.user_id === getReservationUserId">
                 {{user.username}}
               </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="status">Stato</label>
+            <select id="status">
+              <option :selected="reservationStore.getCurrentReservation.status === 'pending'"
+                      value="pending">Da confermare</option>
+              <option :selected="reservationStore.getCurrentReservation.status === 'confirmed'"
+                      value="confirmed">Cofermato</option>
+              <option :selected="reservationStore.getCurrentReservation.status === 'cancelled'"
+                      value="cancelled">Cancellato</option>
+              <option :selected="reservationStore.getCurrentReservation.status === 'completed'"
+                      value="completed">Completato</option>
             </select>
           </div>
 
