@@ -4,6 +4,12 @@ export function getUTCDateString(dateObj) {
   const day = String(dateObj.getUTCDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+export function getCETDateString(dateObj) {
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export function getUTCTimeString(dateObj) {
   const hours = String(dateObj.getUTCHours()).padStart(2, '0');

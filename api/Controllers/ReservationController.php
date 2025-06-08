@@ -207,7 +207,8 @@ class ReservationController extends BaseController
                         'end_time' => $end_time,
                         'client_name' => $client_name,
                         'phone_number' => $phone_number,
-                        'description' => $description
+                        'description' => $description,
+                        'user_id' => $user_id
                     ]
                 );
 

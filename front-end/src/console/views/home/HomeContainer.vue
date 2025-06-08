@@ -4,7 +4,12 @@ import 'vue-cal/style'
 import BottomSheet from '@douxcode/vue-spring-bottom-sheet'
 import '@douxcode/vue-spring-bottom-sheet/dist/style.css'
 import { useReservationStore, useUsersStore, useServicesStore } from "@/console/stores/index.js";
-import { getUTCTimeString, getUTCDateString } from "@/shared/utils/helpers-function.js";
+import {
+  getUTCTimeString,
+  getUTCDateString,
+  getCETDateString,
+  readablePrice
+} from "@/shared/utils/helpers-function.js";
 
 export default {
   setup() {
@@ -43,8 +48,10 @@ export default {
           reservation_id: reservation.reservation_id,
           start: reservation.startDateObj,
           end: reservation.endDateObj,
-          title: reservation.user_name,
-          content: reservation.description
+          title: reservation.user_name + ' - ' + reservation.client_name,
+          content: reservation.description + "<br>" +
+            reservation.servicesString + "<br>" +
+            readablePrice(reservation.total) + "€<br>",
         };
       });
     },
@@ -163,7 +170,7 @@ export default {
     },
     viewChange(view) {
 
-      this.windowStart = getUTCDateString(view.start);
+      this.windowStart = view.id === 'week' ? getUTCDateString(view.start) : getCETDateString(view.start);
       this.windowType = view.id;
       let end = getUTCDateString(view.end);
       this.refresh(end, res => {

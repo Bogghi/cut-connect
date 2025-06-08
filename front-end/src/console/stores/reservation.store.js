@@ -102,6 +102,7 @@ export const useReservationStore = defineStore("reservation", {
           formattedStartTime: startHour+":"+startMinutes,
           formattedEndTime: endHours+":"+endMinutes,
           total: 0,
+          servicesString: '',
           items: []
         };
       });
@@ -111,7 +112,9 @@ export const useReservationStore = defineStore("reservation", {
           ...item,
           readablePrice: readablePrice(item.price),
         });
+        let add = normReservations[item.reservation_id].items.length > 1 ? '+' : '';
         normReservations[item.reservation_id].total += item.price;
+        normReservations[item.reservation_id].servicesString += add + item.service_name;
       })
 
       return Object.values(normReservations);
