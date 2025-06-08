@@ -103,7 +103,10 @@ export const useReservationStore = defineStore("reservation", {
           formattedEndTime: endHours+":"+endMinutes,
           total: 0,
           servicesString: '',
-          items: []
+          items: [],
+          paymentString: reservation.payment_type === 'card' ? 'Pagato con carta' :
+            reservation.payment_type === 'cash' ? 'Pagato in contante' : 'Pagamento in sospseso',
+          payable: reservation.status === 'pending' || reservation.status === 'confirmed',
         };
       });
 

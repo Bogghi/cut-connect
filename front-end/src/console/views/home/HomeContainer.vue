@@ -53,8 +53,7 @@ export default {
           start: reservation.startDateObj,
           end: reservation.endDateObj,
           title: reservation.user_name + ' - ' + reservation.client_name,
-          content: reservation.description + "<br>" +
-            reservation.servicesString + "<br>" +
+          content: reservation.servicesString + "<br>" +
             readablePrice(reservation.total) + "€<br>",
           backgroundColor: color,
         };
@@ -116,7 +115,7 @@ export default {
         }
       });
     },
-    saveChanges() {
+    saveChanges(callback) {
       const reservationData = {}
       let formNodes = document.querySelectorAll('.form-group>input,.form-group>select,.form-group>textarea');
 
@@ -134,8 +133,13 @@ export default {
         reservationData,
         res => {
           if(res) {
-            this.closeReservationBottomSheet();
-            this.refresh();
+            if(callback) {
+              callback(res);
+            }
+            else {
+              this.closeReservationBottomSheet();
+              this.refresh();
+            }
           }
           else {
             alert("Errore durante il salvataggio delle modifiche alla prenotazione");
@@ -217,19 +221,29 @@ export default {
     },
     paymentAction(method) {
 
-      this.reservationStore.performPayment({
-        paymentMethod: method,
-        callback: res => {
-          if(res) {
-            this.refresh();
-            this.closeReservationBottomSheet();
-          }
-          else {
-            alert('Errore durante il pagamento della prenotazione');
-          }
+      this.saveChanges(res => {
+        if(res) {
+          this.reservationStore.performPayment({
+            paymentMethod: method,
+            callback: res => {
+              if(res) {
+                this.closeReservationBottomSheet();
+                this.refresh();
+              }
+              else {
+                alert('Errore durante il pagamento della prenotazione');
+              }
+            }
+          });
+        }
+        else{
+          alert('Errore durante il pagamento della prenotazione');
         }
       });
 
+    },
+    updateEvent(event, a, b, c) {
+      console.log(event, a, b, c);
     }
   },
   mounted() {
@@ -251,7 +265,8 @@ export default {
              style="--vuecal-height: 100%; --vuecal-primary-color: var(--main-color);--vuecal-border-radius: 0;"
              @event-dblclick="e => doubleClick(e.event)"
              @event-create="createEvent"
-             @view-change="viewChange"/>
+             @view-change="viewChange"
+             @event-resize="updateEvent"/>
     <BottomSheet ref="bottomSheet">
       <div class="reservation-info-container">
         <h3>Prenotazione</h3>
@@ -331,13 +346,14 @@ export default {
           <button class="btn btn-danger" @click="deleteReservation">Cancella</button>
           <button class="btn btn-success" @click="saveChanges">Salva</button>
           <b>Totale: {{readableTotal}}</b>
-          <button class="btn btn-payment-card" @click="paymentAction('card')">
+          <button v-if="reservationStore.getCurrentReservation.payable" class="btn btn-payment-card" @click="paymentAction('card')">
             <i class="fa-solid fa-credit-card"></i> Carta
           </button>
-          <button class="btn btn-payment-cash" @click="paymentAction('cash')">
+          <button v-if="reservationStore.getCurrentReservation.payable" class="btn btn-payment-cash" @click="paymentAction('cash')">
             <i class="fa-solid fa-money-bill"></i> Contante
           </button>
         </div>
+        <small>{{reservationStore.getCurrentReservation.paymentString}}</small>
       </div>
     </BottomSheet>
   </div>
