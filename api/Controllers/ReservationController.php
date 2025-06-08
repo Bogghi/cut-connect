@@ -195,12 +195,14 @@ class ReservationController extends BaseController
             $phone_number = $requestBody['phone_number'] ?? null;
             $description = $requestBody['description'] ?? null;
             $reservation_items = $requestBody['reservation_items'] ?? null;
+            $status = $requestBody['status'] ?? null;
 
             if ($reservation_id &&
                 $user_id &&
                 $reservation_date &&
                 $start_time &&
-                $end_time) {
+                $end_time &&
+                $status) {
 
                 $updateResult = $this->dataAccess->update(
                     table: 'reservations',
@@ -212,7 +214,8 @@ class ReservationController extends BaseController
                         'client_name' => $client_name,
                         'phone_number' => $phone_number,
                         'description' => $description,
-                        'user_id' => $user_id
+                        'user_id' => $user_id,
+                        'status' => $status,
                     ]
                 );
 
