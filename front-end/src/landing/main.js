@@ -37,9 +37,7 @@ eventBus.on('navigation', destination => {
         consoleApp = initConsole();
         consoleApp.mount("#app");
       }
-      else {
-        router.push('/');
-      }
+      router.push('/console/login');
 
       break;
     case 'home':
