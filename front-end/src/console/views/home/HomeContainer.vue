@@ -72,8 +72,12 @@ export default {
     },
     getReservationUserId() {
       return this.reservationStore.getCurrentReservation ? this.reservationStore.getCurrentReservation.user_id : 0;
+    },
+    readableTotal() {
+      return this.reservationStore.getCurrentReservation ?
+        readablePrice(this.reservationStore.getCurrentReservation.total)+'€' :
+        readablePrice(0)+'€';
     }
-
   },
   methods: {
     doubleClick(event) {
@@ -210,6 +214,22 @@ export default {
       return this.reservationStore.getCurrentReservation ?
         this.reservationStore.getCurrentReservation.items.some(item => item.service_id === service.service_id) :
         false;
+    },
+    paymentAction(method) {
+
+      this.reservationStore.performPayment({
+        paymentMethod: method,
+        callback: res => {
+          if(res) {
+            this.refresh();
+            this.closeReservationBottomSheet();
+          }
+          else {
+            alert('Errore durante il pagamento della prenotazione');
+          }
+        }
+      });
+
     }
   },
   mounted() {
@@ -310,6 +330,13 @@ export default {
         <div class="reservation-actions">
           <button class="btn btn-danger" @click="deleteReservation">Cancella</button>
           <button class="btn btn-success" @click="saveChanges">Salva</button>
+          <b>Totale: {{readableTotal}}</b>
+          <button class="btn btn-payment-card" @click="paymentAction('card')">
+            <i class="fa-solid fa-credit-card"></i> Carta
+          </button>
+          <button class="btn btn-payment-cash" @click="paymentAction('cash')">
+            <i class="fa-solid fa-money-bill"></i> Contante
+          </button>
         </div>
       </div>
     </BottomSheet>
@@ -330,6 +357,16 @@ export default {
   .reservation-actions {
     display: flex;
     gap: 10px;
+    align-items: flex-end;
+
+    .btn-payment-card {
+      background-color: #007bff;
+      color: white;
+    }
+    .btn-payment-cash {
+      background-color: #003d0c;
+      color: white;
+    }
   }
 }
 

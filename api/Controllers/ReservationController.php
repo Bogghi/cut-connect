@@ -255,4 +255,49 @@ class ReservationController extends BaseController
             ->withStatus($result->statusCode)
             ->withHeader('Content-Type', 'application/json');
     }
+
+    public function performPayment(Request $request, Response $response, array $args): Response
+    {
+        $result = new Result();
+
+        if($this->validateToken($request)) {
+
+            $requestBody = $request->getParsedBody();
+
+            $reservationId = $requestBody['reservation_id'] ?? null;
+            $paymentMethod = $requestBody['payment_method'] ?? null;
+
+            if($reservationId && $paymentMethod) {
+
+                $updateResult = $this->dataAccess->update(
+                    table: 'reservations',
+                    args: ['reservation_id' => $reservationId],
+                    requestData: [
+                        'payment_type' => $paymentMethod,
+                        'status' => 'completed',
+                    ]
+                );
+
+                if($updateResult) {
+                    $result->setSuccessResult();
+                }
+                else {
+                    $result->setGenericError();
+                }
+
+            }
+            else {
+                $result->setInvalidParameters();
+            }
+
+        }
+        else {
+            $result->setUnauthorized();
+        }
+
+        $response->getBody()->write(json_encode($result->data));
+        return $response
+            ->withStatus($result->statusCode)
+            ->withHeader('Content-Type', 'application/json');
+    }
 }

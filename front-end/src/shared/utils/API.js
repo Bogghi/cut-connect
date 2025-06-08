@@ -214,4 +214,15 @@ export default class API {
     });
   }
 
+  performPayment({ reservationId, paymentMethod, callback }) {
+    this.post({
+      url: this.baseUrl + "/reservation/payment",
+      data: {
+        reservation_id: reservationId,
+        payment_method: paymentMethod
+      },
+      callback: callback
+    });
+  }
+
 }

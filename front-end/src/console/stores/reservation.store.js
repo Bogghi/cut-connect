@@ -120,6 +120,19 @@ export const useReservationStore = defineStore("reservation", {
       }
 
       return Object.values(normReservations);
+    },
+    performPayment({ paymentMethod, callback }) {
+      API.init().performPayment({
+        reservationId: this.currentReservationId,
+        paymentMethod: paymentMethod,
+        callback: res => {
+          if (res.status === "OK") {
+            callback && callback(true);
+          } else {
+            callback && callback(false);
+          }
+        }
+      });
     }
   },
   getters: {
