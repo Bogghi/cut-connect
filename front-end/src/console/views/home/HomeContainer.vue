@@ -191,6 +191,11 @@ export default {
     closeReservationBottomSheet() {
       this.$refs['bottomSheet'].close();
       this.reservationItems = null;
+    },
+    isServiceSelected(service) {
+      return this.reservationStore.getCurrentReservation ?
+        this.reservationStore.getCurrentReservation.items.some(item => item.service_id === service.service_id) :
+        false;
     }
   },
   mounted() {
@@ -243,7 +248,7 @@ export default {
           <div>
             <label for="reservation_items">Servizi scelti</label>
             <select id="reservation_items" multiple>
-              <option v-for="service in services" :value="service.service_id">
+              <option v-for="service in services" :value="service.service_id" :selected="isServiceSelected(service)">
                 {{service.name}}
               </option>
             </select>

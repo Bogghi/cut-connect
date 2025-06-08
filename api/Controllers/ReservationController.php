@@ -118,6 +118,7 @@ class ReservationController extends BaseController
                 $end = $requestBody['end'] ?? null;
                 $windowType = $requestBody['window_type'];
                 $reservations = null;
+                $reservations_items = null;
 
                 switch($windowType) {
                     case 'day':
@@ -149,7 +150,17 @@ class ReservationController extends BaseController
                         break;
                 }
 
-                $data = ['reservations' => $reservations];
+                if($reservations) {
+                    $reservations_items = $this->dataAccess->get(
+                        table: 'reservations_items',
+                        args: ['services.deleted' => 0],
+                        fields: ['reservations_items.*', 'services.service_name', 'services.price', 'services.duration'],
+                        join: ['services' => 'service_id'],
+                        in: ['reservation_id' => array_column($reservations, 'reservation_id')],
+                    );
+                }
+
+                $data = ['reservations' => $reservations, 'reservations_items' => $reservations_items];
                 $result->statusCode === 200 ?
                     $result->setSuccessResult($data) :
                     $result->setData($data);

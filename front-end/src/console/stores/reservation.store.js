@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import API from "@/shared/utils/API.js";
-import { getUTCDateString, getUTCTimeString } from "@/shared/utils/helpers-function.js";
+import { getUTCDateString, getUTCTimeString, readablePrice } from "@/shared/utils/helpers-function.js";
 
 export const useReservationStore = defineStore("reservation", {
   state: () => {
@@ -63,7 +63,7 @@ export const useReservationStore = defineStore("reservation", {
         end,
         callback: res => {
           if (res.status === "OK") {
-            this.reservations = this.normalizeReservations(res.reservations);
+            this.reservations = this.normalizeReservations(res.reservations, res.reservations_items);
             callback && callback(true);
           } else {
             callback && callback(false);
@@ -71,8 +71,10 @@ export const useReservationStore = defineStore("reservation", {
         }
       });
     },
-    normalizeReservations(reservations) {
-      return reservations.map(reservation => {
+    normalizeReservations(reservations, reservationsItems) {
+      const normReservations = {};
+
+      reservations.forEach(reservation => {
         const startUtcString = `${reservation.reservation_date}T${reservation.start_time}Z`;
         const endUtcString = `${reservation.reservation_date}T${reservation.end_time}Z`;
 
@@ -93,19 +95,31 @@ export const useReservationStore = defineStore("reservation", {
           '0' + endDateObjCET.getMinutes() :
           endDateObjCET.getMinutes();
 
-        return {
+        normReservations[reservation.reservation_id] = {
           ...reservation,
           startDateObj: startDateObjCET,
           endDateObj: endDateObjCET,
           formattedStartTime: startHour+":"+startMinutes,
           formattedEndTime: endHours+":"+endMinutes,
+          total: 0,
+          items: []
         };
       });
+
+      reservationsItems.forEach((item) => {
+        normReservations[item.reservation_id].items.push({
+          ...item,
+          readablePrice: readablePrice(item.price),
+        });
+        normReservations[item.reservation_id].total += item.price;
+      })
+
+      return Object.values(normReservations);
     }
   },
   getters: {
     getCurrentReservation(state) {
-      return state.reservations.find(reservation => reservation.reservation_id === parseInt(state.currentReservationId));
+      return state.reservations.find(reservation => reservation.reservation_id === parseInt(state.currentReservationId)) ?? null;
     },
   }
 });
