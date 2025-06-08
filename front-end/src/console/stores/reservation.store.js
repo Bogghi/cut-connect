@@ -36,13 +36,21 @@ export const useReservationStore = defineStore("reservation", {
     },
     updateReservation(reservation, callback) {
 
+      const fromDrag = reservation.hasOwnProperty('fromDrag') && reservation.fromDrag;
       let self = this;
-      let data = {
-        ...reservation,
-        reservation_id: self.currentReservationId,
-      };
-      let startDateDB = new Date(reservation.reservation_date+" " + reservation.start_time);
-      let endDateDB = new Date(reservation.reservation_date+" " + reservation.end_time);
+      let data = fromDrag ?
+        {
+          reservation_id: reservation.reservation_id,
+          user_id: reservation.user_id,
+        } :
+        {
+          ...reservation,
+          reservation_id: self.currentReservationId,
+        };
+      let startDateDB = fromDrag ? reservation.start :
+        new Date(reservation.reservation_date+" " + reservation.start_time);
+      let endDateDB = fromDrag ? reservation.end :
+        new Date(reservation.reservation_date+" " + reservation.end_time);
 
       data.reservation_date = getUTCDateString(startDateDB);
       data.start_time = getUTCTimeString(startDateDB);

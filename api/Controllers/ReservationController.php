@@ -79,7 +79,7 @@ class ReservationController extends BaseController
                     args: ['reservation_id' => $reservationId],
                 );
 
-                if($deleteResult && $deleteItemsResult) {
+                if($deleteResult) {
                     $result->setSuccessResult();
                 }
                 else {
@@ -201,22 +201,24 @@ class ReservationController extends BaseController
                 $user_id &&
                 $reservation_date &&
                 $start_time &&
-                $end_time &&
-                $status) {
+                $end_time) {
 
+                $data = [
+                    'reservation_date' => $reservation_date,
+                    'start_time' => $start_time,
+                    'end_time' => $end_time,
+                    'client_name' => $client_name,
+                    'phone_number' => $phone_number,
+                    'description' => $description,
+                    'user_id' => $user_id,
+                ];
+                if($status) {
+                    $data['status'] = $status;
+                }
                 $updateResult = $this->dataAccess->update(
                     table: 'reservations',
                     args: ['reservation_id' => $reservation_id],
-                    requestData: [
-                        'reservation_date' => $reservation_date,
-                        'start_time' => $start_time,
-                        'end_time' => $end_time,
-                        'client_name' => $client_name,
-                        'phone_number' => $phone_number,
-                        'description' => $description,
-                        'user_id' => $user_id,
-                        'status' => $status,
-                    ]
+                    requestData: $data
                 );
 
                 if($reservation_items){

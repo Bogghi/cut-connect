@@ -50,6 +50,7 @@ export default {
           reservation.status === 'completed' ? 'rgb(39, 42, 0)' : '';
         return {
           reservation_id: reservation.reservation_id,
+          user_id: reservation.user_id,
           start: reservation.startDateObj,
           end: reservation.endDateObj,
           title: reservation.user_name + ' - ' + reservation.client_name,
@@ -242,8 +243,24 @@ export default {
       });
 
     },
-    updateEvent(event, a, b, c) {
-      console.log(event, a, b, c);
+    updateEventFromDrag(event) {
+      this.reservationStore.updateReservation(
+        {
+          fromDrag: true,
+          start: event.event.start,
+          end: event.event.end,
+          reservation_id: event.event.reservation_id,
+          user_id: event.event.user_id,
+        },
+        res => {
+          if(res) {
+            this.refresh();
+          }
+          else {
+            alert('Errore durante l\'aggiornamento della prenotazione');
+          }
+        }
+      );
     }
   },
   mounted() {
@@ -266,7 +283,8 @@ export default {
              @event-dblclick="e => doubleClick(e.event)"
              @event-create="createEvent"
              @view-change="viewChange"
-             @event-resize="updateEvent"/>
+             @event-drop="updateEventFromDrag"
+             @event-resize-end="updateEventFromDrag"/>
     <BottomSheet ref="bottomSheet">
       <div class="reservation-info-container">
         <h3>Prenotazione</h3>
