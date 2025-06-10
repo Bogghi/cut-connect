@@ -24,8 +24,7 @@ export default {
       if(!this.serviceStore.services || !this.serviceStore.currentServiceId) {
         return '';
       }
-
-      console.log(this.serviceStore.currentServiceId);
+      
       return "Hai selto il servizio <b>" + this.serviceStore.getServiceById.service_name + "</b><br>" +
              "Durata: " + this.serviceStore.getServiceById.duration + " minuti<br>" +
              "Prezzo: " + this.serviceStore.getServiceById.readablePrice + "€";
