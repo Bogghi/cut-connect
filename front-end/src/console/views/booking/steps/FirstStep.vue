@@ -1,6 +1,7 @@
 <script>
 import Service from '@/shared/components/Service.vue';
 import { useServicesStore } from "@/console/stores/index.js";
+import router from "@/console/router/index.js";
 
 export default {
   name: 'FirstStep',
@@ -12,6 +13,11 @@ export default {
   },
   components: {
     Service,
+  },
+  methods: {
+    goToSecondStep(serviceId) {
+      router.push({name: 'second-step'});
+    }
   },
   mounted() {
     this.servicesStore.getServices(res => {
@@ -35,7 +41,8 @@ export default {
              :service-name="service.service_name"
              :description="service.description"
              :duration="parseInt(service.duration)"
-             :price="parseInt(service.price)" />
+             :price="parseInt(service.price)"
+             @reserve-service="goToSecondStep" />
   </div>
 </div>
 </template>
