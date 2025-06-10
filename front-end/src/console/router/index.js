@@ -34,7 +34,7 @@ const router = createRouter({
           component: FirstStep,
         },
         {
-          path: '',
+          path: ':serviceId',
           name: 'second-step',
           component: SecondStep,
         }

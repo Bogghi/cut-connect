@@ -16,7 +16,13 @@ export const useServicesStore = defineStore("services", {
     },
   },
   actions: {
-    getServices(callback) {
+    getServices(callback, force = false) {
+
+      if(this.services && !force) {
+        callback && callback(true);
+        return;
+      }
+
       API.init().getServices({
         callback: res => {
           if (res.status === "OK") {

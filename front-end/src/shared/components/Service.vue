@@ -50,7 +50,7 @@ export default {
     </div>
     <h3 class="txt-secondary">{{ formattedPrice }}€</h3>
 
-    <button class="btn btn-secondary" @click="$emit('reserveService')">Prenota</button>
+    <button class="btn btn-secondary" @click="$emit('reserveService', serviceId)">Prenota</button>
     <button class="btn" v-if="editable" @click="$emit('editService', serviceId)">
       <i class="fa-solid fa-pen"></i>
     </button>
