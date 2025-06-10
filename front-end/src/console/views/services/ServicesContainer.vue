@@ -145,6 +145,7 @@ export default {
           :description="service.description"
           :duration="parseInt(service.duration)"
           :price="parseInt(service.price)"
+          editable
           @edit-service="editServiceForm" />
         <div class="service add clickable" title="aggiungi servizio" @click="openAddServiceForm"
              v-if="usersStore.isLoggedIn">

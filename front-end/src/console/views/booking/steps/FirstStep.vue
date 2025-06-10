@@ -1,6 +1,25 @@
 <script>
+import Service from '@/shared/components/Service.vue';
+import { useServicesStore } from "@/console/stores/index.js";
+
 export default {
   name: 'FirstStep',
+  setup() {
+    const servicesStore = useServicesStore();
+    return {
+      servicesStore
+    };
+  },
+  components: {
+    Service,
+  },
+  mounted() {
+    this.servicesStore.getServices(res => {
+      if(!res) {
+        alert("Errore durante il caricamento dei servizi");
+      }
+    });
+  }
 }
 </script>
 

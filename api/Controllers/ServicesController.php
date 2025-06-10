@@ -21,19 +21,12 @@ class ServicesController extends BaseController
     {
         $result = new Result();
 
-        if($this->validateToken($request)) {
+        $services = $this->dataAccess->get(
+            table: 'services',
+            args: ['deleted' => 0],
+        );
 
-            $services = $this->dataAccess->get(
-                table: 'services',
-                args: ['deleted' => 0],
-            );
-
-            $result->setSuccessResult(['services' => $services]);
-
-        }
-        else {
-            $result->setUnauthorized();
-        }
+        $result->setSuccessResult(['services' => $services]);
 
         $response->getBody()->write(json_encode($result->data));
         return $response

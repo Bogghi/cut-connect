@@ -21,6 +21,10 @@ export default {
     price: {
       type: Number,
       default: 0,
+    },
+    editable: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

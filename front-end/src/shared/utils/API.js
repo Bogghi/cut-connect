@@ -34,6 +34,7 @@ export default class API {
     data,
     callback,
     callbackError = null,
+    pubFetch = false
   })
   {
 
@@ -41,7 +42,7 @@ export default class API {
       "Content-type": "application/json; charset=UTF-8",
     };
 
-    if(localStorage.getItem("jwt_token") !== null) {
+    if(localStorage.getItem("jwt_token") !== null && !pubFetch) {
       headers["Authorization"] = "Bearer " + localStorage.getItem("jwt_token");
     }
 
@@ -184,6 +185,7 @@ export default class API {
   getServices({callback}) {
     this.get({
       url: this.baseUrl + "/services/get",
+      pubFetch: true,
       callback: callback
     });
   }
