@@ -199,6 +199,12 @@ export default {
     width: 1200px;
     margin-bottom: 80px;
     min-height: calc(100vh - 492px);
+
+    .service.add {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 
   .banner {

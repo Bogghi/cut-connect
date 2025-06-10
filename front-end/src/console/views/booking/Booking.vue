@@ -25,6 +25,16 @@ export default {
     width: 500px;
     height: 1166px;
 
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
     &.panel { padding: 0; }
 
     @media (max-width: 500px) {

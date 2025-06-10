@@ -30,7 +30,12 @@ export default {
     <p>Prenota il tuo prossimo appuntamento con i nostri barbieri professionisti ed evita l'attesa.</p>
   </div>
   <div class="services-container">
-
+    <Service v-for="service in servicesStore.services"
+             :service-id="service.service_id"
+             :service-name="service.service_name"
+             :description="service.description"
+             :duration="parseInt(service.duration)"
+             :price="parseInt(service.price)" />
   </div>
 </div>
 </template>
@@ -62,13 +67,11 @@ export default {
   }
 }
 
-.banner {
-  background-color: var(--main-color);
-  color: white;
+.services-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  padding: var(--booking-padding);
   align-items: center;
-  text-align: center;
+  gap: var(--booking-padding);
 }
 </style>

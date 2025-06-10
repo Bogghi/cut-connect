@@ -51,7 +51,7 @@ export default {
     <h3 class="txt-secondary">{{ formattedPrice }}€</h3>
 
     <button class="btn btn-secondary" @click="$emit('reserveService')">Prenota</button>
-    <button class="btn" @click="$emit('editService', serviceId)">
+    <button class="btn" v-if="editable" @click="$emit('editService', serviceId)">
       <i class="fa-solid fa-pen"></i>
     </button>
   </div>
@@ -64,12 +64,6 @@ export default {
   box-shadow: 0 0 10px #E2E8F0;
   padding: 30px;
   width: 200px;
-
-  &.add {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 
   h3 {
     margin-bottom: 0;
