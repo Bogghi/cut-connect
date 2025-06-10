@@ -1,6 +1,7 @@
 <script>
 import { useServicesStore, useUsersStore } from "@/console/stores/index.js";
 import BottomSheet from "@douxcode/vue-spring-bottom-sheet";
+import Service from "@/shared/components/Service.vue";
 
 export default {
   name: 'ServicesContainer',
@@ -19,7 +20,8 @@ export default {
     };
   },
   components: {
-    BottomSheet
+    BottomSheet,
+    Service,
   },
   computed: {
     serviceFormSuccessBtnTitle() {
@@ -137,25 +139,13 @@ export default {
 
     <div class="services-wrapper">
       <div class="services">
-        <div class="service" v-for="service in servicesStore.services" :key="service.service_id">
-          <h3>{{ service.service_name }}</h3>
-          <p class="txt-2">{{ service.description }}</p>
-          <div class="service-time">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                 stroke-linejoin="round" class="lucide lucide-clock h-3 w-3 mr-1">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span class="txt-2">{{ service.duration }} minuti</span>
-          </div>
-          <h3 class="txt-secondary">{{ service.readablePrice }}€</h3>
-
-          <button class="btn btn-secondary">Prenota</button>
-          <button class="btn" @click="editServiceForm(service.service_id)">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-        </div>
+        <Service v-for="service in servicesStore.services"
+          :service-id="service.service_id"
+          :service-name="service.service_name"
+          :description="service.description"
+          :duration="parseInt(service.duration)"
+          :price="parseInt(service.price)"
+          @edit-service="editServiceForm" />
         <div class="service add clickable" title="aggiungi servizio" @click="openAddServiceForm"
              v-if="usersStore.isLoggedIn">
           <i class="fa-solid fa-plus"></i>

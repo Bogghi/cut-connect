@@ -11,7 +11,7 @@ export default {
     <p>Prenota il tuo prossimo appuntamento con i nostri barbieri professionisti ed evita l'attesa.</p>
   </div>
   <div class="services-container">
-    
+
   </div>
 </div>
 </template>
