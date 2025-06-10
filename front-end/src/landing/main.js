@@ -20,16 +20,20 @@ const initConsole = () => {
   return consoleApp;
 };
 let consoleApp = null;
-let consoleMounted = false;
+let fromBooking = false;
 
 app.mount("#nav");
 window.history.replaceState({}, '', '/');
-router.push('/');
 
 eventBus.on('navigation', destination => {
 
   switch(destination) {
     case 'console':
+
+      if(fromBooking) {
+        document.querySelector('#nav').classList.remove('hidden');
+        fromBooking = false;
+      }
 
       if(!consoleApp) {
         document.querySelectorAll('#landing,#footer')
@@ -41,6 +45,11 @@ eventBus.on('navigation', destination => {
 
       break;
     case 'home':
+
+      if(fromBooking) {
+        document.querySelector('#nav').classList.remove('hidden');
+        fromBooking = false;
+      }
 
       router.push('/');
       if(consoleApp) {
@@ -55,6 +64,11 @@ eventBus.on('navigation', destination => {
       break;
     case 'services':
 
+      if(fromBooking) {
+        document.querySelector('#nav').classList.remove('hidden');
+        fromBooking = false;
+      }
+
       if(!consoleApp) {
         document.querySelectorAll('#landing')
           .forEach(node => node.classList.add('hidden'));
@@ -63,7 +77,22 @@ eventBus.on('navigation', destination => {
       }
 
       router.push('/console/services');
+      break;
+    case 'booking':
+      if(!consoleApp) {
+        fromBooking = true;
+        document.querySelectorAll('#landing,#footer,#nav')
+          .forEach(node => node.classList.add('hidden'));
+        consoleApp = initConsole();
+        consoleApp.mount("#app");
+      }
 
+      router.push('/console/booking');
+      break;
   }
 
+})
+
+document.querySelector('#reserve-slot').addEventListener('click', () => {
+  eventBus.emit('navigation', 'booking');
 })
