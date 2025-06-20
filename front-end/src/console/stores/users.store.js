@@ -43,15 +43,7 @@ export const useUsersStore = defineStore('user', {
       });
     },
     loadUserInfo(callback) {
-      const jwtToken = localStorage.getItem('jwt_token');
-
-      if(!jwtToken){
-        callback(false);
-        return;
-      }
-
       API.init().loadUserInfo({
-        token: jwtToken,
         callback: res => {
           if(res.status === 'OK'){
             this.users = this.normalizeUsers(res.users);
