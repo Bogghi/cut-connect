@@ -3,7 +3,7 @@ import Login from "@/console/views/login/Login.vue";
 import Home from "@/console/views/home/HomeContainer.vue";
 import ServicesContainer from "@/console/views/services/ServicesContainer.vue";
 import Booking from "@/console/views/booking/Booking.vue";
-import { FirstStep, SecondStep } from "@/console/views/booking/steps/index.js";
+import { FirstStep, SecondStep, ThirdStep } from "@/console/views/booking/steps/index.js";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -37,6 +37,11 @@ const router = createRouter({
           path: ':serviceId',
           name: 'second-step',
           component: SecondStep,
+        },
+        {
+          path: ':serviceId/barber/:barberId',
+          name: 'third-step',
+          component: ThirdStep,
         }
       ]
     }

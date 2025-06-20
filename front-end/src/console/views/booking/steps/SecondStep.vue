@@ -1,6 +1,7 @@
 <script>
 import Banner from '@/console/views/booking/components/Banner.vue';
 import { useServicesStore, useUsersStore } from "@/console/stores/index.js";
+import router from "@/console/router/index.js";
 
 export default {
   name: 'SecondStep',
@@ -38,6 +39,11 @@ export default {
       return this.usersStore.users;
     }
   },
+  methods: {
+    goToThirdStep(barberId) {
+      router.push({ name: 'third-step', params: { barberId: barberId, serviceId: this.serviceStore.currentServiceId } });
+    }
+  },
   mounted() {
     this.serviceStore.currentServiceId = parseInt(this.$route.params.serviceId) ?? 0;
     this.serviceStore.getServices(res => {
@@ -61,7 +67,7 @@ export default {
   <div class="barbers-container">
     <div class="barber" v-for="barber in barbers">
       <h2>{{barber.username}}</h2>
-      <button class="btn btn-primary">Seleziona</button>
+      <button class="btn btn-primary" @click="goToThirdStep(barber.user_id)">Seleziona</button>
     </div>
   </div>
 </template>
